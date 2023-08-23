@@ -54,6 +54,10 @@ const initializePassport = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
+          if (req.cookies.token) {
+            return done('You are already logged in', false)
+          }
+
           let user = await userService.getUserByEmail(username);
           if (!user) {
             return done(null, false, 'Invalid email or password');
