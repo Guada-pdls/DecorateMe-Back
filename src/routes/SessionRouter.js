@@ -43,17 +43,12 @@ class SessionRouter extends MainRouter {
 
     this.get('/google/callback', ['PUBLIC'],
       passport.authenticate('google', {
-        failureRedirect: '/google/failure'
+        failureRedirect: 'http://localhost:5173/login'
       }
-    ), (req, res) => {
-      console.log(req.user)
-      return res.redirect('/google/success')
+    ), generateToken, (req, res) => {
+      return res.redirect('http://localhost:5173/')
     })
     
-    // this.get('/google/logout', ['PUBLIC'], (req, res) => {
-    //   req.session.destroy()
-    //   res.send('success')
-    // })
   }
 }
 
