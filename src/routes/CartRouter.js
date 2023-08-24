@@ -10,8 +10,7 @@ const {
   addProduct,
   deleteProduct,
   clearCart,
-  purchase,
-  deleteCart,
+  purchase
 } = CartController;
 
 class CartRouter extends MainRouter {

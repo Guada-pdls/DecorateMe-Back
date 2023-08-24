@@ -13,3 +13,9 @@ POST http://localhost:8080/api/cart/64cabdbf0627c82829900268/purchase
 
 ### clearCart
 DELETE http://localhost:8080/api/cart/64ca5c45e82a548eec605769
+
+### ADD PROD TO CART
+PUT http://localhost:8080/api/cart/64e618e541f34b53fc5b5c7d/product/648756a3387dbab73002f32e/1
+
+### REMOVE PROD FROM CART
+DELETE http://localhost:8080/api/cart/64e618e541f34b53fc5b5c7d/product/648756a3387dbab73002f32e/1
