@@ -9,7 +9,7 @@ import passport from "passport";
 import isLoggedIn from "../middlewares/isLoggedIn.js";
 import generateToken from "../middlewares/generateToken.js";
 
-const { register, login, logout, current } = UserController;
+const { register, login, logout, current, sendPswMail, resetPassword } = UserController;
 
 class SessionRouter extends MainRouter {
   init() {
@@ -27,6 +27,9 @@ class SessionRouter extends MainRouter {
     );
 
     this.get("/logout", ["USER", "ADMIN"], passportCall("jwt"), logout);
+
+    this.post('/forgot-password', ['PUBLIC'], sendPswMail)
+    this.post('/reset-password', ['USER', 'ADMIN'], resetPassword)
 
     this.get(
       "/current",

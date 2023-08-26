@@ -1,7 +1,7 @@
 import { logger } from "../utils/logger.js";
 import CustomError from "../middlewares/error/CustomError.js";
 import EErrors from "../middlewares/error/enum.js";
-import { non_existentProductErrorInfo } from "../middlewares/error/generateProductInfo.js";
+import { nonExistentProductErrorInfo } from "../middlewares/error/generateProductInfo.js";
 import { cartService, productService } from "../service/index.js";
 import { Types } from "mongoose";
 
@@ -111,7 +111,13 @@ class CartController {
     try {
       let cartId = req.params.cid;
       let productId = req.params.pid;
-      let units = Number(req.params.units) || 0;
+      let units = Number(req.params.units) || 1;
+
+      units <= 0 && CustomError.createError({
+        name: 'Invalid units',
+        cause: invalidUnits(),
+        message
+      })
 
       let cartFound = await cartService.getCart(cartId);
       let productFound = await productService.getProduct(productId);
@@ -119,7 +125,7 @@ class CartController {
       if (!productFound) {
         CustomError.createError({
           name: `Product search error`,
-          cause: non_existentProductErrorInfo(productId),
+          cause: nonExistentProductErrorInfo(productId),
           message: "Error trying to add products to cart",
           code: EErrors.DATABASE_ERROR,
         });

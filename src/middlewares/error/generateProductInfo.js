@@ -9,8 +9,8 @@ const productCreationErrorInfo = (product) => {
     `;
 };
 
-const non_existentProductErrorInfo = (productId) => {
+const nonExistentProductErrorInfo = (productId) => {
   return `The product with ID: "${productId}" doesn't exist`;
 };
 
-export { productCreationErrorInfo, non_existentProductErrorInfo };
+export { productCreationErrorInfo, nonExistentProductErrorInfo };

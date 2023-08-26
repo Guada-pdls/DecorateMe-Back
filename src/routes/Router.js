@@ -36,14 +36,15 @@ class MainRouter {
 
   handlePolicies = (policies) => (req, res, next) => {
     if (policies[0] === "PUBLIC") return next();
+    console.log('policies',req.cookies)
     if (!req.cookies.token) {
       return res
         .status(401)
-        .send({ status: "error", error: "Unauthenticated" });
+        .send({ status: "error", error: "Unauthenticated 1" });
     }
     let user = jwt.verify(req.cookies.token, process.env.SECRET_JWT);
     if (!policies.includes(user.role?.toUpperCase())) {
-      return res.status(403).send({ status: "error", error: "Unauthorized" });
+      return res.status(403).send({ status: "error", error: "Unauthorized 1" });
     }
     req.user = user;
     next();

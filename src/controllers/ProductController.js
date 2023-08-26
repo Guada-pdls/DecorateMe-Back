@@ -2,7 +2,7 @@ import { productService } from "../service/index.js";
 import CustomError from "../middlewares/error/CustomError.js";
 import {
   productCreationErrorInfo,
-  non_existentProductErrorInfo,
+  nonExistentProductErrorInfo,
 } from "../middlewares/error/generateProductInfo.js";
 import EError from "../middlewares/error/enum.js";
 
@@ -90,7 +90,7 @@ class ProductController {
         } else {
           CustomError.createError({
             name: "Product update error",
-            cause: non_existentProductErrorInfo(id),
+            cause: nonExistentProductErrorInfo(id),
             message: "Error trying to update the product",
             code: EError.DATABASE_ERROR,
           });
@@ -115,7 +115,7 @@ class ProductController {
         // return res.sendUserError(404, "Product not found");
         CustomError.createError({
           name: "Product deletion error",
-          cause: non_existentProductErrorInfo(id),
+          cause: nonExistentProductErrorInfo(id),
           message: "Error trying to delete the product",
           code: EError.DATABASE_ERROR,
         });

@@ -3,7 +3,10 @@
 GET http://localhost:8080/api/cart
 
 ### getCart
-GET http://localhost:8080/api/cart/64cc3d666d318b64ea92b221
+GET http://localhost:8080/api/cart/64e618e541f34b53fc5b5c7d
+
+### getCart bill
+GET http://localhost:8080/api/cart/bill/64e618e541f34b53fc5b5c7d
 
 ### addProducts
 PUT http://localhost:8080/api/cart/64cc3d666d318b64ea92b221/product/648756a3387dbab73002f32e/5

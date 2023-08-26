@@ -1,5 +1,7 @@
-const non_existentCartErrorInfo = (productId) => {
+const nonExistentCartErrorInfo = (productId) => {
   return `The product with ID: "${productId}" doesn't exist`;
 };
 
-export default non_existentCartErrorInfo;
+const invalidUnits = () => 'The units must be greater than 0'
+
+export default { nonExistentCartErrorInfo, invalidUnits };
