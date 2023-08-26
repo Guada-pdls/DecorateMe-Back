@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import UserDTO from "../dto/User.dto.js";
 import { cartService, userService } from "../service/index.js";
-import config from "../config/config.js";
-import sendMail from "../utils/sendMail.js";
 
 class UserController {
   getUsers = async (req, res) => {

@@ -40,11 +40,11 @@ class MainRouter {
     if (!req.cookies.token) {
       return res
         .status(401)
-        .send({ status: "error", error: "Unauthenticated 1" });
+        .send({ status: "error", error: "Unauthenticated" });
     }
     let user = jwt.verify(req.cookies.token, process.env.SECRET_JWT);
     if (!policies.includes(user.role?.toUpperCase())) {
-      return res.status(403).send({ status: "error", error: "Unauthorized 1" });
+      return res.status(403).send({ status: "error", error: "Unauthorized" });
     }
     req.user = user;
     next();
