@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { logger } from "../utils/logger.js";
+import config from "./config.js";
 
 class MongoSingleton {
   static #instance;
   constructor() {
-    mongoose.connect(process.env.MONGO_LINK, {
+    mongoose.connect(config.MONGO_LINK, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

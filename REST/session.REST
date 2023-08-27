@@ -19,7 +19,7 @@ Content-Type: application/json
     "last_name": "User",
     "email": "guadita@gmail.com",
     "password": "Hola123$",
-    "age": 22
+    "age": 19
 }
 
 ###

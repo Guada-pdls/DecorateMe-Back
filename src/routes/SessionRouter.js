@@ -27,7 +27,7 @@ class SessionRouter extends MainRouter {
       register
     );
 
-    this.get("/logout", ["USER", "ADMIN"], passportCall("jwt"), logout);
+    this.get("/logout", ["USER","PREMIUM", "ADMIN"], passportCall("jwt"), logout);
 
     this.post('/forgot-password', ['PUBLIC'], sendPswMail)
     

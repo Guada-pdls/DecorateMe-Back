@@ -85,6 +85,25 @@ class UserController {
     }
   };
 
+  changeRole = async (req, res) => {
+    try {
+      const uid = req.params.uid;
+      const user = await userService.getUser(uid) 
+
+      if (!user) {
+        return res.sendServerError(404, 'User not found')
+      }
+
+      const newRole = user.role.toUpperCase() === 'USER' ? 'premium' : 'user'
+
+      await userService.updateUser(uid, { role: newRole })
+      res.sendSuccess(200, 'User role updated to ' + newRole)
+    } catch (error) {
+      logger.error(error.message);
+      return res.sendServerError(500, error.message);
+    }
+  }
+
   deleteUser = async (req, res) => {
     try {
       const uid = req.params.uid;
@@ -106,7 +125,7 @@ class UserController {
     }
   };
 
-  login = (req, res) => res.sendSuccess(200, { user: req.body });
+  login = (req, res) => res.sendSuccess(200, { user: req.user });
 
   register = (req, res) => res.sendSuccess(201, "User registred successfully");
 

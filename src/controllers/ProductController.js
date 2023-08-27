@@ -5,6 +5,7 @@ import {
   nonExistentProductErrorInfo,
 } from "../middlewares/error/generateProductInfo.js";
 import EError from "../middlewares/error/enum.js";
+import { logger } from "../utils/logger.js";
 
 class ProductController {
   getProducts = async (req, res) => {
@@ -22,7 +23,7 @@ class ProductController {
       }
       return res.sendUserError(404, { error: "Not found products" });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       res.sendServerError(error);
     }
   };
@@ -37,7 +38,7 @@ class ProductController {
         return res.sendUserError(404, { error: "Not found" });
       }
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       res.sendServerError(500, error);
     }
   };
@@ -68,12 +69,13 @@ class ProductController {
         thumbnail,
         stock,
         rating,
+        owner: req.user.email
       });
       return res.sendSuccess(201, {
         response: newProduct,
       });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       next(error);
     }
   };
@@ -100,7 +102,7 @@ class ProductController {
       }
       return res.sendSuccess(200, response);
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       next(error);
     }
   };
@@ -121,9 +123,8 @@ class ProductController {
         });
       }
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       next(error);
-      // res.sendServerError(500, error);
     }
   };
 }

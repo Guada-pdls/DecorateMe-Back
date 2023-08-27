@@ -9,10 +9,13 @@ POST http://localhost:8080/api/products HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "product",
-    "description": "lorem ipsum dolor sit amet, consectetur",
-    "category": "Art",
-    "price": 20,
+  "name": "Accent Table",
+  "description": "Small accent table with a metal frame and wooden top",
+  "category": "Furniture",
+  "price": 79.99,
+  "thumbnail": "https://example.com/accent_table_image.jpg",
+  "stock": 23,
+  "rating": 0
 }
 
 ### UPDATE
