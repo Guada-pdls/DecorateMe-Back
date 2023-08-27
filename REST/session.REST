@@ -25,5 +25,23 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/api/session/logout
 
-### GOOGLE
-GET http://localhost:8080/api/session/google/callback
+### Forgot password
+POST http://localhost:8080/api/session/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "guadita@gmail.com"
+}
+
+### Reset Password request
+GET http://localhost:8080/api/session/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU2MThlNjQxZjM0YjUzZmM1YjVjN2YiLCJmaXJzdF9uYW1lIjoiR3VhZGEiLCJsYXN0X25hbWUiOiJVc2VyIiwiZnVsbF9uYW1lIjoiR3VhZGEgVXNlciIsImVtYWlsIjoiZ3VhZGl0YUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImNpZCI6IjY0ZTYxOGU1NDFmMzRiNTNmYzViNWM3ZCIsImlhdCI6MTY5MzA5NjkyNiwiZXhwIjoxNjkzMTAwNTI2fQ.MN_IOUwEKDLyJTHBFxWOqkfv8FS09Ol8jkL2t4DpDEE
+
+### Reset Password
+
+POST http://localhost:8080/api/session/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+    "password": "Holi123$",
+    "confirmPassword": "Holi123$"
+}

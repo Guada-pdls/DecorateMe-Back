@@ -1,5 +1,6 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
+import { logger } from "../utils/logger.js";
 
 class MainRouter {
   constructor() {

@@ -1,15 +1,16 @@
 import MainRouter from "./Router.js";
 import passportCall from "../middlewares/passportCall.js";
 import authJwt from "../passport-jwt/authJwt.js";
-import password_validator from "../middlewares/passwordValidator.js";
+import passwordValidator from "../middlewares/passwordValidator.js";
 import registerValidator from "../middlewares/registerValidator.js";
 import createHash from "../middlewares/createHash.js";
 import UserController from "../controllers/UserController.js";
 import passport from "passport";
 import isLoggedIn from "../middlewares/isLoggedIn.js";
 import generateToken from "../middlewares/generateToken.js";
+import validateResetPswToken from "../middlewares/validateResetPswToken.js";
 
-const { register, login, logout, current, sendPswMail, resetPassword } = UserController;
+const { register, login, logout, current, sendPswMail, resetPassword, pswResetTokenCookie } = UserController;
 
 class SessionRouter extends MainRouter {
   init() {
@@ -20,7 +21,7 @@ class SessionRouter extends MainRouter {
       ["PUBLIC"],
       isLoggedIn,
       registerValidator,
-      password_validator,
+      passwordValidator,
       createHash,
       passportCall("register"),
       register
@@ -29,7 +30,10 @@ class SessionRouter extends MainRouter {
     this.get("/logout", ["USER", "ADMIN"], passportCall("jwt"), logout);
 
     this.post('/forgot-password', ['PUBLIC'], sendPswMail)
-    this.post('/reset-password', ['USER', 'ADMIN'], resetPassword)
+    
+    this.get('/reset-password/:token', ['PUBLIC'], validateResetPswToken, pswResetTokenCookie)
+    
+    this.post('/reset-password', ['PUBLIC'], validateResetPswToken, passwordValidator, resetPassword)
 
     this.get(
       "/current",

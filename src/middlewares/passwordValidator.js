@@ -1,4 +1,4 @@
-const password_validator = (req, res, next) => {
+const passwordValidator = (req, res, next) => {
   let { password } = req.body;
 
   if (
@@ -13,4 +13,4 @@ const password_validator = (req, res, next) => {
   return next();
 };
 
-export default password_validator;
+export default passwordValidator;

@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import UserDTO from "../dto/User.dto.js";
 import { cartService, userService } from "../service/index.js";
+import { logger } from "../utils/logger.js";
+import config from "../config/config.js";
+import sendMail from "../utils/sendMail.js";
+import { compareSync, genSaltSync, hashSync } from "bcrypt";
 
 class UserController {
   getUsers = async (req, res) => {
@@ -102,18 +106,9 @@ class UserController {
     }
   };
 
-  login = async (req, res) => {
-    try {
-      return res.sendSuccess(200, { user: req.body });
-    } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
-    }
-  };
+  login = (req, res) => res.sendSuccess(200, { user: req.body });
 
-  register = (req, res) => {
-    return res.sendSuccess(201, "User registred successfully");
-  };
+  register = (req, res) => res.sendSuccess(201, "User registred successfully");
 
   logout = async (req, res) => {
     try {
@@ -128,6 +123,15 @@ class UserController {
     return res.sendSuccess(200, { user: new UserDTO(req.user) });
   };
 
+  pswResetTokenCookie(req, res) {
+    res.cookie('resetPswToken', req.params.token, {
+      maxAge: 60 * 60 * 1000,
+      httpOnly: true
+    })
+    console.log('setCookie',req.params.token);
+    res.sendSuccess(201, 'Reset available')
+  }
+
   sendPswMail = async (req, res) => {
     try {
       const { email } = req.body;
@@ -141,10 +145,6 @@ class UserController {
         <p>We received your change password request for your DecorateMe account, to modify your password <a href="http://localhost:5173/reset-password/${token}">click here</a></p>
         <p>This link will expire in 1 hour, if you didn't request this password change, please disregard this.</p>
       `)
-      res.cookie('resetPswToken', token, {
-        maxAge: 60 * 60,
-        httpOnly: true
-      })
       res.sendSuccess(201, 'Mail sent successfully')
     } catch (error) {
       logger.error(error.message)
@@ -152,24 +152,23 @@ class UserController {
     }
   }
 
-  resetPassword = async (req, res) => {    
-      try {
-        const { resetPswToken } = req.cookies
-        const user = jwt.verify(resetPswToken, config.SECRET_JWT)
+  resetPassword = async (req, res) => {
+    try {
+      const { password, confirmPassword } = req.body
+      if (!password || !confirmPassword || !(password === confirmPassword)) return res.sendUserError(400, 'Passwords mismatch')
 
-        if (!resetPswToken || !isValid) return res.sendUserError(400, 'Invalid token')
+      const dbUser = await userService.getUserByEmail(req.user.email)
+      if (compareSync(password, dbUser.password)) return res.sendUserError(400, 'The new password cannot be the same as the old one')
 
-        const { newPassword, confirmNewPassword } = req.body
-        if (!(newPassword === confirmNewPassword)) return res.sendUserError(400, 'Passwords mismatch')
+      const newPassword = hashSync(password, genSaltSync())
+      await userService.updateUser(dbUser._id, { password: newPassword })
 
-        const dbUser = await userService.getUserByEmail(user.email)
-        if (!(newPassword === dbUser)) return res.sendUserError(400, 'The new password cannot be the same as the old one')
-        
-        // cartService.update()
-        // response & redirect
-      } catch (error) {
-        
-      }
+      return res.sendSuccess(200, 'Password updated successfully')
+      // response & redirect
+    } catch (error) {
+      logger.error(error.message)
+      res.sendServerError(500, error.message) // TODO error message
+    }
   }
 
 
