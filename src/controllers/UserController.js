@@ -143,11 +143,10 @@ class UserController {
   };
 
   pswResetTokenCookie(req, res) {
-    res.cookie('resetPswToken', req.params.token, {
+    res.cookie('resetPswToken', req.query.token, {
       maxAge: 60 * 60 * 1000,
       httpOnly: true
     })
-    console.log('setCookie',req.params.token);
     res.sendSuccess(201, 'Reset available')
   }
 
@@ -161,7 +160,7 @@ class UserController {
       const token = jwt.sign({ ...new UserDTO(user) }, config.SECRET_JWT, { expiresIn: '1h' })
       sendMail(email, 'Reset Password', `
         <h2>Reset account password</h2>
-        <p>We received your change password request for your DecorateMe account, to modify your password <a href="http://localhost:5173/reset-password/${token}">click here</a></p>
+        <p>We received your change password request for your DecorateMe account, to modify your password <a href="http://localhost:5173/reset-password/?token=${token}">click here</a></p>
         <p>This link will expire in 1 hour, if you didn't request this password change, please disregard this.</p>
       `)
       res.sendSuccess(201, 'Mail sent successfully')

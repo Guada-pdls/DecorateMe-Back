@@ -5,7 +5,7 @@ import { logger } from "../utils/logger.js"
 export default (req, res, next) => {
 	try {
 		let user
-		let { token } = req.params
+		let { token } = req.query
 		if (!token) { // if the token doesn't exist in the params, look it up in cookies
 			const { resetPswToken } = req.cookies
 			if (!resetPswToken) return res.sendUserError(401, 'No token provided')

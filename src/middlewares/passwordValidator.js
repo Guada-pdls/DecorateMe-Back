@@ -6,7 +6,7 @@ const passwordValidator = (req, res, next) => {
   ) {
     return res.status(400).json({
       success: false,
-      response: "Password too weak", // must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character
+      error: "Password too weak", // must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character
     });
   }
 

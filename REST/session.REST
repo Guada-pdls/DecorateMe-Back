@@ -34,7 +34,7 @@ Content-Type: application/json
 }
 
 ### Reset Password request
-GET http://localhost:8080/api/session/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU2MThlNjQxZjM0YjUzZmM1YjVjN2YiLCJmaXJzdF9uYW1lIjoiR3VhZGEiLCJsYXN0X25hbWUiOiJVc2VyIiwiZnVsbF9uYW1lIjoiR3VhZGEgVXNlciIsImVtYWlsIjoiZ3VhZGl0YUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImNpZCI6IjY0ZTYxOGU1NDFmMzRiNTNmYzViNWM3ZCIsImlhdCI6MTY5MzA5NjkyNiwiZXhwIjoxNjkzMTAwNTI2fQ.MN_IOUwEKDLyJTHBFxWOqkfv8FS09Ol8jkL2t4DpDEE
+GET http://localhost:8080/api/session/reset-password/?token=
 
 ### Reset Password
 

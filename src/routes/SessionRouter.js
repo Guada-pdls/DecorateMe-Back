@@ -31,7 +31,7 @@ class SessionRouter extends MainRouter {
 
     this.post('/forgot-password', ['PUBLIC'], sendPswMail)
     
-    this.get('/reset-password/:token', ['PUBLIC'], validateResetPswToken, pswResetTokenCookie)
+    this.get('/reset-password', ['PUBLIC'], validateResetPswToken, pswResetTokenCookie)
     
     this.post('/reset-password', ['PUBLIC'], validateResetPswToken, passwordValidator, resetPassword)
 

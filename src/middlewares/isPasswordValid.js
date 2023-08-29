@@ -10,7 +10,7 @@ export default (req, res, next) => {
 
     return res.status(401).json({
       success: false,
-      response: "Invalid email or password",
+      error: "Invalid email or password",
     });
   } catch (error) {
     logger.error(error);

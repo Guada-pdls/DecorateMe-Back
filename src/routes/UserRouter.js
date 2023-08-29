@@ -11,7 +11,7 @@ class UserRouter extends MainRouter {
     this.get('/:uid', ['ADMIN'], getUser);
     this.post('/', ['ADMIN'], getUserByEmail);
     this.put('/:uid', ['USER', 'ADMIN'], updateUser); // Poder cambiar contraseña -->
-    this.put('/premium/:uid', ['USER', 'PREMIUM'], changeRole);
+    this.put('/premium/:uid', ['ADMIN'], changeRole);
     this.delete('/:uid', ['ADMIN'], deleteUser); // y USER para borrar cuenta -->
   }
 }

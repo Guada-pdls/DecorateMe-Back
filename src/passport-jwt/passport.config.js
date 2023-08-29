@@ -66,7 +66,7 @@ const initializePassport = () => {
           const { password } = user
           let verified = compareSync(req.body.password, password)
           if (!verified) {
-            return done(null, false, 'Invalid password');
+            return done(null, false, 'Invalid email or password');
           }
 
           req.user = new UserDTO(user)
