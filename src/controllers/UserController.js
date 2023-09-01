@@ -35,6 +35,7 @@ class UserController {
         : res.sendUserError(404, "Not found user");
     } catch (error) {
       logger.error(error);
+      logger.error(error);
       res.sendServerError(500, error);
     }
   };
@@ -48,6 +49,7 @@ class UserController {
         ? res.sendSuccess(200, { user: new UserDTO(user) })
         : res.sendUserError(404, "Not found user");
     } catch (error) {
+      logger.error(error);
       logger.error(error);
       res.sendServerError(500, error);
     }
@@ -80,6 +82,7 @@ class UserController {
       }
       return res.sendUserError(400, "There's nothing to update");
     } catch (error) {
+      logger.error(error);
       logger.error(error);
       return res.sendServerError(500, error);
     }

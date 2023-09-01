@@ -1,0 +1,8 @@
+### 
+GET http://localhost:8080/api/users/
+
+###
+GET http://localhost:8080/api/users/345
+
+###
+DELETE http://localhost:8080/api/users/64d977d31c64e0838e727382

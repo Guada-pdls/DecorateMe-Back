@@ -1,0 +1,29 @@
+###
+GET http://localhost:8080/api/session/current
+
+###
+POST http://localhost:8080/api/session/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "guadita@admin.com",
+    "password": "Hola123$"
+}
+
+###
+POST http://localhost:8080/api/session/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "first_name": "Guada",
+    "last_name": "User",
+    "email": "guadita@gmail.com",
+    "password": "Hola123$",
+    "age": 22
+}
+
+###
+GET http://localhost:8080/api/session/logout
+
+### GOOGLE
+GET http://localhost:8080/api/session/google/callback

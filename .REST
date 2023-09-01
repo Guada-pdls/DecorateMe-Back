@@ -1,0 +1,5 @@
+### GMAIL
+GET http://localhost:8080/api/gmail
+
+### LOGGER
+GET http://localhost:8080/loggertest

@@ -1,0 +1,27 @@
+###
+GET http://localhost:8080/api/products
+
+###
+GET http://localhost:8080/api/products/648756a3387dbab73002f32e 
+
+###
+POST http://localhost:8080/api/products HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "product",
+    "description": "lorem ipsum dolor sit amet, consectetur",
+    "category": "Art",
+    "price": 20,
+}
+
+###
+PUT http://localhost:8080/api/products/648b9b6f3b4ab23a82357f83 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "pan"
+}
+
+###
+DELETE  http://localhost:8080/api/products/648b9b6f3b4ab23a82357a82
