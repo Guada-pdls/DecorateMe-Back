@@ -9,8 +9,8 @@ const { getProducts, getProduct, createProduct, updateProduct, deleteProduct } =
 class ProductsRouter extends MainRouter {
   init() {
     this.get("/", ["PUBLIC"], getProducts);
-    this.get("/:pid", ["PUBLIC"], getProduct);
     this.post("/", ["PREMIUM", "ADMIN"], passportCall('jwt'),createProduct);
+    this.get("/:pid", ["PUBLIC"], getProduct);
     this.put("/:pid", ["PREMIUM", "ADMIN"], canModifyProduct, updateProduct);
     this.delete("/:pid", ["PREMIUM", "ADMIN"], passportCall('jwt'), canModifyProduct, deleteProduct);
   }

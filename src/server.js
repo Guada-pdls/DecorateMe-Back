@@ -38,6 +38,8 @@ import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 import { addLogger, logger } from "./utils/logger.js";
 import session from "express-session";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUiExpress from 'swagger-ui-express'
 
 const server = express();
 config.connectDB();
@@ -66,6 +68,19 @@ server.use(session({
 server.use(addLogger)
 
 server.use('/', router)
+
+const swaggerOptions = {
+  definition: {
+      openapi: '3.0.1',
+      info: {
+          title: 'DecorateMe documentation',
+          description: 'Api para la decoración del hogar'
+      }
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`]
+}
+const specs = swaggerJsDoc(swaggerOptions)
+server.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 server.use(errorHandler)
 server.use(notFoundHandler)

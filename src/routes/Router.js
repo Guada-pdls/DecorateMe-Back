@@ -1,6 +1,7 @@
 import { Router } from "express";
-import jwt from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import { logger } from "../utils/logger.js";
+import config from "../config/config.js";
 
 class MainRouter {
   constructor() {
@@ -20,18 +21,18 @@ class MainRouter {
         await cb.apply(this, params);
       } catch (error) {
         logger.error(error.message);
-        params[1].status(500).send(error);
+        params[1].status(500).json(error);
       }
     });
   }
 
   generateCustomResponses = (req, res, next) => {
     res.sendSuccess = (code = 200, response) =>
-      res.status(code).send({ status: code, success: true, response });
+      res.status(code).json({ success: true, response });
     res.sendServerError = (code = 500, error) =>
-      res.status(code).send({ status: code, success: false, error });
+      res.status(code).json({ success: false, error });
     res.sendUserError = (code = 400, error) =>
-      res.status(code).send({ status: code, success: false, error });
+      res.status(code).json({ success: false, error });
     next();
   };
 
@@ -43,7 +44,7 @@ class MainRouter {
         .status(401)
         .send({ status: "error", error: "Unauthenticated" });
     }
-    let user = jwt.verify(req.cookies.token, process.env.SECRET_JWT);
+    let user = verify(req.cookies.token, config.SECRET_JWT);
     if (!policies.includes(user.role?.toUpperCase())) {
       return res.status(403).send({ status: "error", error: "Unauthorized" });
     }

@@ -1,20 +1,21 @@
 import { logger } from "../utils/logger.js";
-import CustomError from "../middlewares/error/CustomError.js";
-import EErrors from "../middlewares/error/enum.js";
-import { nonExistentProductErrorInfo } from "../middlewares/error/generateProductInfo.js";
+import CustomError from "../utils/error/CustomError.js";
+import EErrors from "../utils/error/enum.js";
+import { nonExistentProductErrorInfo } from "../utils/error/generateProductInfo.js";
+import { notFoundCarts, invalidUnits, nonExistentCart, nonExistentProductInCart, emptyCart, invalidStocks } from "../utils/error/generateCartInfo.js"
 import { cartService, productService } from "../service/index.js";
-import { Types } from "mongoose";
+import mongoose from "mongoose";
 
 class CartController {
-  getCarts = async (req, res) => {
+  getCarts = async (req, res, next) => {
     try {
       let carts = await cartService.getCarts([
         {
           $lookup: {
-            from: "products", // Colección
-            localField: "products.pid", // Campo de la colección
-            foreignField: "_id", // Campo de la colección que debo buscar
-            as: "productsPopulated", // Nombre
+            from: "products", 
+            localField: "products.pid", 
+            foreignField: "_id", 
+            as: "productsPopulated",
           },
         },
         {
@@ -22,7 +23,7 @@ class CartController {
             path: "$productsPopulated",
             preserveNullAndEmptyArrays: true,
           },
-        }, // Desagrega el arreglo del lookup, y agrega aquellos que están vacíos
+        },
         { $sort: { "productsPopulated.name": 1 } },
         {
           $group: {
@@ -51,33 +52,28 @@ class CartController {
         return res.sendSuccess(200, carts);
       }
 
-      return res.sendUserError(404, "Cart not found");
-    } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
-    }
-  };
+      CustomError.createError({
+        name: "Get carts error",
+        cause: notFoundCarts,
+        message: "Error getting carts",
+        code: EErrors.NOT_FOUND_ERROR
+      })
 
-  getCart = async (req, res) => {
-    try {
-      let id = req.params.cid;
-      let cart = await cartService.getCart(id);
-      if (cart) {
-        return res.sendSuccess(200, { cart });
-      }
-      return res.sendUserError(404, "Cart not found");
     } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
+      newt(error)
     }
-  };
+  }
 
-  getCartBill = async (req, res) => {
+  getCartBill = async (req, res, next) => {
     try {
-      let id = req.params.cid;
-      let cart = await cartService.getCartBill([
-        { $match: { _id: new Types.ObjectId(id) } }, // filtro por id carrito
-        { $unwind: "$products" },
+      const id = req.params.cid;
+      const cart = await cartService.getCartBill([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $unwind: "$products",
+        },
         {
           $lookup: {
             from: "products",
@@ -86,26 +82,44 @@ class CartController {
             as: "product",
           },
         },
-        { $unwind: "$product" },
         {
-          $project: {
-            _id: 0,
-            total: {
-              $multiply: ["$products.units", "$product.price"],
-            },
+          $unwind: "$product",
+        },
+        {
+          $addFields: {
+            totalProd: { $multiply: ["$products.units", "$product.price"] },
           },
         },
-        { $group: { _id: null, total: { $sum: "$total" } } },
+        {
+          $group: {
+            _id: "$_id",
+            products: { $push: { $mergeObjects: ["$products", "$product", { totalProd: "$totalProd" }] } },
+            totalCart: { $sum: "$totalProd" },
+          },
+        },
+        {
+          $project: {
+            "products._id": 0,
+            "products.rating": 0,
+            "products.owner": 0,
+            "products.__v": 0,
+          },
+        },
       ]);
-      if (cart) {
-        return res.sendSuccess(200, cart);
-      }
-      return res.sendUserError(404, "Cart not found");
+
+      CustomError.createError({
+        name: "Get cart error",
+        cause: nonExistentCart(id),
+        message: "Error getting cart",
+        code: EErrors.NOT_FOUND_ERROR
+      })
+
+      return res.sendSuccess(200, cart);
     } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
+      next(error)
     }
   };
+
 
   addProduct = async (req, res, next) => {
     try {
@@ -115,8 +129,9 @@ class CartController {
 
       units <= 0 && CustomError.createError({
         name: 'Invalid units',
-        cause: invalidUnits(),
-        message
+        cause: invalidUnits,
+        message: 'Error trying to add products to cart',
+        code: EErrors.INVALID_TYPE_ERROR
       })
 
       let cartFound = await cartService.getCart(cartId);
@@ -124,11 +139,20 @@ class CartController {
 
       if (!productFound) {
         CustomError.createError({
-          name: `Product search error`,
+          name: `Get product error`,
           cause: nonExistentProductErrorInfo(productId),
           message: "Error trying to add products to cart",
-          code: EErrors.DATABASE_ERROR,
+          code: EErrors.NOT_FOUND_ERROR,
         });
+      }
+
+      if (!cartFound) {
+        CustomError.createError({
+          name: `Get cart error`,
+          cause: nonExistentCart(cartId),
+          message: "Error trying to add products to cart",
+          code: EErrors.NOT_FOUND_ERROR,
+        })
       }
 
       /* Check if the stock of a product is greater than or equal to the units to be added to the cart 
@@ -162,8 +186,6 @@ class CartController {
 
       return res.sendSuccess(200, cart);
     } catch (error) {
-      logger.error(error);
-      // return res.sendServerError(500, error); // error: updating cart
       next(error);
     }
   };
@@ -172,18 +194,27 @@ class CartController {
     try {
       let cartId = req.params.cid;
       let productId = req.params.pid;
-      let units = Number(req.params.units) || 0;
+      let units = Number(req.params.units) || 1;
 
       let cartFound = await cartService.getCart(cartId);
       let productFound = await productService.getProduct(productId);
 
       if (!productFound) {
         CustomError.createError({
-          name: `Product search error`,
-          cause: non_existentProductErrorInfo(productId),
+          name: `Get product error`,
+          cause: nonExistentProductErrorInfo(productId),
           message: "Error trying to add products to cart",
-          code: EErrors.DATABASE_ERROR,
+          code: EErrors.NOT_FOUND_ERROR
         });
+      }
+
+      if (!cartFound) {
+        CustomError.createError({
+          name: `Get cart error`,
+          cause: nonExistentCart(cartId),
+          message: "Error trying to add products to cart",
+          code: EErrors.NOT_FOUND_ERROR
+        })
       }
 
       let productInCart = cartFound.products.find(
@@ -191,19 +222,23 @@ class CartController {
       );
 
       if (!productInCart) {
-        return res.sendUserError(400, "Not found product in cart");
+        CustomError.createError({
+          name: "Not found product in cart",
+          cause: nonExistentProductInCart(productId),
+          message: "Error trying to add products to cart",
+          code: EErrors.NOT_FOUND_ERROR
+        })
       }
 
-      /* Check if the stock of a product is greater than or equal to the units to be added to the cart 
-      and subtracted to the product stock. */
+      /* Check if the stock of a product is greater than or equal to the units to be added to the cart and subtracted to the product stock. */
       productInCart.units > units
         ? (productInCart.units -= units)
         : (cartFound = {
-            ...cartFound,
-            products: cartFound.products.filter(
-              (product) => String(product.pid) !== productId
-            ),
-          });
+          ...cartFound,
+          products: cartFound.products.filter(
+            (product) => String(product.pid) !== productId
+          ),
+        });
 
       let cart = await cartService.deleteProduct(cartId, {
         products: cartFound.products,
@@ -211,8 +246,7 @@ class CartController {
 
       return res.sendSuccess(200, cart);
     } catch (error) {
-      logger.error(error);
-      next(error);
+      next(error)
     }
   };
 
@@ -221,14 +255,18 @@ class CartController {
       let cartId = req.params.cid;
       let cartFound = await cartService.getCart(cartId);
 
-      // if (!cartFound) res.sendUserError(404, "Cart not found");
+      if (!cartFound) CustomError.createError({
+        name: `Get cart error`,
+        cause: nonExistentCart(cartId),
+        message: "Error trying to clear cart",
+        code: EErrors.NOT_FOUND_ERROR
+      })
 
       let cart = await cartService.clearCart(cartId, { products: [] });
 
       return res.sendSuccess(200, cart);
     } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
+      next(error)
     }
   };
 
@@ -237,13 +275,22 @@ class CartController {
       const cartId = req.params.cid;
       const cart = await cartService.getCart(cartId);
 
-      // NO NECESITA ESTO POR QUE SE MANEJA CON LOS MIDDLEWARES (BORRAR CUANDO LO VEAS JEJE)
-      // if (!cart) {
-      //   return res.sendUserError(404, "Cart not found");
-      // }
+      if (!cart) {
+        CustomError.createError({
+          name: `Get cart error`,
+          cause: nonExistentCart(cartId),
+          message: "Error trying to purchase cart",
+          code: EErrors.NOT_FOUND_ERROR
+        })
+      }
 
       if (cart.products.length === 0) {
-        return res.sendUserError(400, "No products in cart");
+        CustomError.createError({
+          name: "Purchase error",
+          cause: emptyCart,
+          message: "Error trying to purchase cart",
+          code: EErrors.BAD_REQUEST_ERROR
+        })
       }
 
       let outOfStockProducts = [];
@@ -283,10 +330,12 @@ class CartController {
       }
 
       if (amount === 0) {
-        return res.sendUserError(400, {
-          error: "The cart only has out-of-stock products.",
-          outOfStockProducts,
-        });
+        CustomError.createError({
+          name: "Purchase error",
+          cause: invalidStocks,
+          message: "Error trying to purchase cart",
+          code: EErrors.BAD_REQUEST_ERROR
+        })
       }
 
       const date = new Date();
@@ -308,8 +357,7 @@ class CartController {
         outOfStockProducts,
       });
     } catch (error) {
-      logger.error(error);
-      return res.sendServerError(500, error);
+      next(error);
     }
   };
 }

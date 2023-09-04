@@ -1,15 +1,26 @@
-const validateCart = async (req, res, next) => {
-  const requestedCart = req.params.cid;
+import CustomError from "../utils/error/CustomError.js";
+import EErrors from "../utils/error/enum.js";
 
-  if (req.user.role.toUpperCase() !== "ADMIN") {
-    const userCart = req.user?.cid?.toString();
-    if (requestedCart !== userCart) {
-      return res.status(400).json({
-        message: "Carts do not match",
-      });
+const validateCart = async (req, res, next) => {
+  try {
+    const requestedCart = req.params.cid;
+  
+    if (req.user.role.toUpperCase() !== "ADMIN") {
+      const userCart = req.user?.cid?.toString();
+      if (requestedCart !== userCart) {
+        CustomError.createError({
+          name: 'Validation Error',
+          cause: 'Invalid cart',
+          message: 'Carts do not match',
+          code: EErrors.VALIDATION_ERROR
+        })
+      }
     }
+
+    return next();
+  } catch (error) {
+    next(error)
   }
-  return next();
 };
 
 export default validateCart;
