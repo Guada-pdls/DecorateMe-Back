@@ -42,11 +42,10 @@ class ProductController {
       } else {
         CustomError.createError({
           name: 'Get product error',
-          cause: nonExistentProductErrorInfo,
+          cause: nonExistentProductErrorInfo(id),
           message: 'Error getting product',
           code: EError.NOT_FOUND_ERROR
         })
-        return res.sendUserError(404, { error: "Not found" })
       }
     } catch (error) {
       next(error)

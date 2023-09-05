@@ -23,13 +23,6 @@ class CartRouter extends MainRouter {
       validateCart,
       getCartBill
     );
-    // this.get(
-    //   "/bill/:cid",
-    //   ["USER", "PREMIUM", "ADMIN"],
-    //   passportCall("jwt"),
-    //   validateCart,
-    //   getCartBill
-    // );
     this.put(
       "/:cid/product/:pid/:units",
       ["USER", "PREMIUM"],

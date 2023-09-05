@@ -12,9 +12,9 @@ class CartController {
       let carts = await cartService.getCarts([
         {
           $lookup: {
-            from: "products", 
-            localField: "products.pid", 
-            foreignField: "_id", 
+            from: "products",
+            localField: "products.pid",
+            foreignField: "_id",
             as: "productsPopulated",
           },
         },
@@ -30,7 +30,7 @@ class CartController {
             _id: "$_id",
             products: {
               $push: {
-                pid: "$productsPopulated",
+                pid: "$productsPopulated._id",
                 units: {
                   $arrayElemAt: [
                     "$products.units",
@@ -42,6 +42,12 @@ class CartController {
                     },
                   ],
                 },
+                name: "$productsPopulated.name",
+                description: "$productsPopulated.description",
+                category: "$productsPopulated.category",
+                price: "$productsPopulated.price",
+                thumbnail: "$productsPopulated.thumbnail",
+                stock: "$productsPopulated.stock",
               },
             },
           },
@@ -107,7 +113,7 @@ class CartController {
         },
       ]);
 
-      CustomError.createError({
+      if (!cart) CustomError.createError({
         name: "Get cart error",
         cause: nonExistentCart(id),
         message: "Error getting cart",
@@ -338,15 +344,10 @@ class CartController {
         })
       }
 
-      const date = new Date();
-      const formattedDate = date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+      const date = new Date().toLocaleString()
 
       const ticket = await cartService.purchase({
-        purchase_date: formattedDate,
+        purchase_date: date,
         amount,
         purchaser: req.user.email,
       });

@@ -2,7 +2,7 @@
 GET http://localhost:8080/api/products
 
 ### GET ONE
-GET http://localhost:8080/api/products/648756a3387dbab73002f32e 
+GET http://localhost:8080/api/products/64ebb2d8ced3b9fa1f0e2700
 
 ### CREATE
 POST http://localhost:8080/api/products HTTP/1.1
