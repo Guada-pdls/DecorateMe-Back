@@ -38,7 +38,6 @@ class MainRouter {
 
   handlePolicies = (policies) => (req, res, next) => {
     if (policies[0] === "PUBLIC") return next();
-    console.log('policies',req.cookies)
     if (!req.cookies.token) {
       return res
         .status(401)

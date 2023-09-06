@@ -120,7 +120,7 @@ class CartController {
         code: EErrors.NOT_FOUND_ERROR
       })
 
-      return res.sendSuccess(200, cart);
+      return res.sendSuccess(200, cart[0]);
     } catch (error) {
       next(error)
     }
