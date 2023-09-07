@@ -83,7 +83,6 @@ class UserController {
       return res.sendUserError(400, "There's nothing to update");
     } catch (error) {
       logger.error(error);
-      logger.error(error);
       return res.sendServerError(500, error);
     }
   };
@@ -116,14 +115,14 @@ class UserController {
       if (!user) {
         return res.sendUserError(404, "Not found user");
       }
-      let deleteUser = await userService.deleteUser(uid);
       let deleteCart = await cartService.deleteCart(cid);
+      let deleteUser = await userService.deleteUser(uid);
 
       if (deleteUser && deleteCart) {
         return res.sendSuccess(200, `User ${user._id} deleted`);
       }
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       return res.sendServerError(500, error);
     }
   };

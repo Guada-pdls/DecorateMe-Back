@@ -18,42 +18,35 @@ class CartRouter extends MainRouter {
     this.get("/", ["ADMIN"], getCarts);
     this.get(
       "/:cid",
-      ["USER", "ADMIN"],
-      passportCall("jwt"),
-      validateCart,
-      getCart
-    );
-    this.get(
-      "/bill/:cid",
-      ["USER", "ADMIN"],
+      ["USER", "PREMIUM", "ADMIN"],
       passportCall("jwt"),
       validateCart,
       getCartBill
     );
     this.put(
       "/:cid/product/:pid/:units",
-      ["USER"],
+      ["USER", "PREMIUM"],
       passportCall("jwt"),
       validateCart,
       addProduct
     );
     this.delete(
       "/:cid/product/:pid/:units",
-      ["USER"],
+      ["USER", "PREMIUM"],
       passportCall("jwt"),
       validateCart,
       deleteProduct
     );
     this.delete(
       "/:cid",
-      ["USER"],
+      ["USER", "PREMIUM"],
       passportCall("jwt"),
       validateCart,
       clearCart
     );
     this.post(
       "/:cid/purchase",
-      ["USER"],
+      ["USER", "PREMIUM"],
       passportCall("jwt"),
       validateCart,
       purchase

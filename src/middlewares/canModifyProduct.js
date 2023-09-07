@@ -1,4 +1,6 @@
 import { productService } from "../service/index.js"
+import CustomError from "../utils/error/CustomError.js"
+import EErrors from "../utils/error/enum.js"
 
 export default async (req, res, next) => {
 	try {
@@ -7,10 +9,14 @@ export default async (req, res, next) => {
 		const pid = req.params.pid
 		const product = await productService.getProduct(pid)
 
-		if (!(product.owner === req.user.email)) return res.sendUserError(401, 'You must be the product owner or an admin to delete this')
+		if (!(product.owner === req.user.email)) CustomError.createError({
+			name: 'Modify product error',
+			cause: 'Cannot modify product',
+			message: 'You must be the product owner or an admin to delete this',
+			code: EErrors.VALIDATION_ERROR
+		})
 		next()
 	} catch (error) {
-		logger.error(error.message)
-		res.sendUserError(500, 'You are not allowed to modify this')
+		next(error)
 	}
 }

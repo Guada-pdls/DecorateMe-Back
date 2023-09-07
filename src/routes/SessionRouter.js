@@ -37,9 +37,8 @@ class SessionRouter extends MainRouter {
 
     this.get(
       "/current",
-      ["USER", "ADMIN"],
+      ["USER", "PREMIUM", "ADMIN"],
       passportCall("jwt"),
-      authJwt("user"),
       current
     );
 

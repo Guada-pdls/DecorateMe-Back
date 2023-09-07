@@ -1,14 +1,14 @@
 import { productService } from "../service/index.js";
-import CustomError from "../middlewares/error/CustomError.js";
+import CustomError from "../utils/error/CustomError.js";
 import {
   productCreationErrorInfo,
   nonExistentProductErrorInfo,
-} from "../middlewares/error/generateProductInfo.js";
-import EError from "../middlewares/error/enum.js";
-import { logger } from "../utils/logger.js";
+  notFoundProductsErrorInfo,
+} from "../utils/error/generateProductInfo.js";
+import EError from "../utils/error/enum.js";
 
 class ProductController {
-  getProducts = async (req, res) => {
+  getProducts = async (req, res, next) => {
     try {
       let page = req.query.page ?? 1;
       let limit = req.query.limit ?? 6;
@@ -21,25 +21,34 @@ class ProductController {
       if (products) {
         return res.sendSuccess(200, { products });
       }
-      return res.sendUserError(404, { error: "Not found products" });
+
+      CustomError.createError({
+        name: 'Get products error',
+        cause: notFoundProductsErrorInfo,
+        message: 'Error getting products',
+        code: EError.NOT_FOUND_ERROR
+      })
     } catch (error) {
-      logger.error(error.message);
-      res.sendServerError(error);
+      next(error)
     }
   };
 
-  getProduct = async (req, res) => {
+  getProduct = async (req, res, next) => {
     try {
-      let id = req.params.pid;
-      let product = await productService.getProduct(id);
+      let id = req.params.pid
+      let product = await productService.getProduct(id)
       if (product) {
-        return res.sendSuccess(200, { product });
+        return res.sendSuccess(200, { product })
       } else {
-        return res.sendUserError(404, { error: "Not found" });
+        CustomError.createError({
+          name: 'Get product error',
+          cause: nonExistentProductErrorInfo(id),
+          message: 'Error getting product',
+          code: EError.NOT_FOUND_ERROR
+        })
       }
     } catch (error) {
-      logger.error(error.message);
-      res.sendServerError(500, error);
+      next(error)
     }
   };
 
@@ -50,13 +59,7 @@ class ProductController {
       if (!name || !description || !category || !price || !thumbnail) {
         CustomError.createError({
           name: "Product creation error",
-          cause: productCreationErrorInfo({
-            name,
-            description,
-            category,
-            price,
-            thumbnail,
-          }),
+          cause: productCreationErrorInfo(product),
           message: "Error trying to create product",
           code: EError.INVALID_TYPE_ERROR,
         });
@@ -75,8 +78,7 @@ class ProductController {
         response: newProduct,
       });
     } catch (error) {
-      logger.error(error.message);
-      next(error);
+      next(error)
     }
   };
 
@@ -94,7 +96,7 @@ class ProductController {
             name: "Product update error",
             cause: nonExistentProductErrorInfo(id),
             message: "Error trying to update the product",
-            code: EError.DATABASE_ERROR,
+            code: EError.NOT_FOUND_ERROR,
           });
         }
       } else {
@@ -102,8 +104,7 @@ class ProductController {
       }
       return res.sendSuccess(200, response);
     } catch (error) {
-      logger.error(error.message);
-      next(error);
+      next(error)
     }
   };
 
@@ -114,17 +115,15 @@ class ProductController {
       if (product) {
         return res.sendSuccess(200, `Product '${product._id}' deleted`);
       } else {
-        // return res.sendUserError(404, "Product not found");
         CustomError.createError({
           name: "Product deletion error",
           cause: nonExistentProductErrorInfo(id),
           message: "Error trying to delete the product",
-          code: EError.DATABASE_ERROR,
+          code: EError.NOT_FOUND_ERROR,
         });
       }
     } catch (error) {
-      logger.error(error.message);
-      next(error);
+      next(error)
     }
   };
 }
