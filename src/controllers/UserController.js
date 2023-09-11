@@ -35,21 +35,19 @@ class UserController {
         : res.sendUserError(404, "Not found user");
     } catch (error) {
       logger.error(error);
-      logger.error(error);
       res.sendServerError(500, error);
     }
   };
 
   getUserByEmail = async (req, res) => {
     try {
-      let email = req.body.email;
+      let email = req.body.email
       let user = await userService.getUserByEmail(email);
 
       user
         ? res.sendSuccess(200, { user: new UserDTO(user) })
         : res.sendUserError(404, "Not found user");
     } catch (error) {
-      logger.error(error);
       logger.error(error);
       res.sendServerError(500, error);
     }
