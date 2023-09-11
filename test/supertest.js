@@ -35,6 +35,7 @@ describe('Testing DecorateMe', () => {
 			expect(_body.response.user).to.have.property('_id')
 
 			userId = _body.response.user._id.toString()
+			cartId = _body.response.user.cid.toString()
 
 			// Seteo cookies y las verifico
 			const cookieResult = headers['set-cookie'][0]
@@ -108,6 +109,50 @@ describe('Testing DecorateMe', () => {
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(200)
 			expect(_body.success).to.be.true
+		})
+	})
+	describe('Test de carts', () => {
+		before(async () => {
+			// Accedo como user
+			const { headers } = await requester.post('/api/session/login').send(mockUser)
+      const cookieResult = headers['set-cookie'][0]
+      cookie = {
+        name: cookieResult.split('=')[0],
+        value: cookieResult.split('=')[1]
+      }
+      expect(cookie.name).to.be.ok
+      expect(cookie.value).to.be.ok
+		})
+		it('GET /api/cart/:cid debe traer el carrito del usuario', async () => {
+			const { ok, statusCode, _body } = await requester.get(`/api/cart/${cartId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response).to.have.property('_id')
+		})
+		it('PUT /api/cart/:cid/product/:pid/:units debe agregar units de pid a cid', async () => {
+			productId = '64ebb295ced3b9fa1f0e26fd'
+			const { ok, statusCode, _body } = await requester.put(`/api/cart/${cartId}/product/${productId}/2`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response).to.have.property('_id')
+			expect(_body.response.products[0]).to.be.an('object')
+		})
+		it('DELETE /api/cart/:cid/product/:pid/:units debe eliminar correctamente el producto del carrito', async () => {
+			const { ok, statusCode, _body } = await requester.delete(`/api/cart/${cartId}/product/${productId}/1`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response).to.have.property('_id')
+			expect(_body.response.products).to.be.an('array')
+		})
+		it('DELETE /api/cart/:cid debe vaciar el carrito', async () => {
+			const { ok, statusCode, _body } = await requester.delete(`/api/cart/${cartId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response.products).to.be.empty
 		})
 	})
 
