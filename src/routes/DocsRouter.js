@@ -18,7 +18,7 @@ const specs = swaggerJsDoc(swaggerOptions)
 
 class DocsRouter extends MainRouter {
 	init() {
-		this.get('/', ['PUBLIC'], swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+		this.use('/', ['PUBLIC'], swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 		// ! cb.apply is not a function
 	}
 }

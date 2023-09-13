@@ -51,6 +51,15 @@ class MainRouter {
     next();
   };
 
+  use(path, policies, ...callbacks) {
+    this.router.use(
+      path,
+      this.handlePolicies(policies),
+      this.generateCustomResponses,
+      this.applyCallbacks(callbacks)
+    );
+  }
+
   get(path, policies, ...callbacks) {
     this.router.get(
       path,
