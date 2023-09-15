@@ -1,4 +1,5 @@
 import { model, Schema, Types } from 'mongoose';
+import { __dirname } from '../../../utils/utils.js';
 
 let collection = 'users';
 
@@ -8,7 +9,7 @@ let schema = new Schema({
   photo: {
     type: String,
     default:
-      'https://images-ext-2.discordapp.net/external/BohSksq0ot1Y-lwrt8-wkD9fmyHbKwzWbSP27CG7XBU/https/cdn-icons-png.flaticon.com/512/1053/1053244.png?width=460&height=460',
+      `${__dirname}/../public/img/default.jpg`,
   },
   email: { type: String, required: true, unique: true, index: true },
   age: { type: Number },
@@ -22,7 +23,7 @@ let schema = new Schema({
   cid: { type: Types.ObjectId, ref: 'carts', unique: true },
   documents: {
     type: [{
-      name: { type: String, required: true },
+      name: { type: String, required: true, enum: ['identification', 'adress proof', 'account statement proof'] },
       reference: { type: String, required: true }
     }],
     default: [],

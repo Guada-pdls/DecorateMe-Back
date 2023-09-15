@@ -5,18 +5,17 @@ import EErrors from "../utils/error/enum.js";
 const validator = async (req, res, next) => {
   try {
     let { first_name, last_name, email, password } = req.body;
-
     if (!first_name || !last_name || !email || !password) {
       CustomError.createError({
         name: 'Error creating user',
-        cause: 'Missing required fields',
+        cause: 'missing required fields',
         message: 'All data required',
         code: EErrors.VALIDATION_ERROR
       })
     } else if (!email.match(/^[^\s@]+@[^\s@]+.[^\s@]+$/)) {
       CustomError.createError({
         name: 'Error creating user',
-        cause: 'Invalid email',
+        cause: 'The email must be valid',
         message: 'Invalid email',
         code: EErrors.VALIDATION_ERROR
       })
@@ -26,8 +25,8 @@ const validator = async (req, res, next) => {
     if (Boolean(userExists)) {
       CustomError.createError({
         name: 'Error creating user',
-        cause: 'User already registered',
-        message: 'User already registered',
+        cause: 'user already registered',
+        message: 'Cannot create',
         code: EErrors.VALIDATION_ERROR
       })
     }

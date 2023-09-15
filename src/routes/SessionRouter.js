@@ -1,6 +1,5 @@
 import MainRouter from "./Router.js";
 import passportCall from "../middlewares/passportCall.js";
-import authJwt from "../passport-jwt/authJwt.js";
 import passwordValidator from "../middlewares/passwordValidator.js";
 import registerValidator from "../middlewares/registerValidator.js";
 import createHash from "../middlewares/createHash.js";
@@ -9,6 +8,7 @@ import passport from "passport";
 import isLoggedIn from "../middlewares/isLoggedIn.js";
 import generateToken from "../middlewares/generateToken.js";
 import validateResetPswToken from "../middlewares/validateResetPswToken.js";
+import uploader from "../utils/uploader.js";
 
 const { register, login, logout, current, sendPswMail, resetPassword, pswResetTokenCookie } = UserController;
 
@@ -19,6 +19,7 @@ class SessionRouter extends MainRouter {
     this.post(
       "/register",
       ["PUBLIC"],
+      uploader.single('photo'),
       isLoggedIn,
       registerValidator,
       passwordValidator,
@@ -26,7 +27,7 @@ class SessionRouter extends MainRouter {
       passportCall("register"),
       register
     );
-
+    
     this.get("/logout", ["USER","PREMIUM", "ADMIN"], passportCall("jwt"), logout);
 
     this.post('/forgot-password', ['PUBLIC'], sendPswMail)
