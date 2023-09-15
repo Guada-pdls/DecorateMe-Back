@@ -85,6 +85,10 @@ class UserController {
     }
   };
 
+  uploadDocuments = async (req, res) => {
+    
+  }
+
   changeRole = async (req, res) => {
     try {
       const uid = req.params.uid;

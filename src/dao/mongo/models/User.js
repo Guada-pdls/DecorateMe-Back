@@ -20,6 +20,14 @@ let schema = new Schema({
   },
   password: { type: String, required: true },
   cid: { type: Types.ObjectId, ref: 'carts', unique: true },
+  documents: {
+    type: [{
+      name: { type: String, required: true },
+      reference: { type: String, required: true }
+    }],
+    default: [],
+  },
+  last_connection: { type: String }
 });
 
 let User = model(collection, schema);
