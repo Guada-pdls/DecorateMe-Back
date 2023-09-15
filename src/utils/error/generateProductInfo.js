@@ -9,8 +9,10 @@ const productCreationErrorInfo = product => {
     `;
 };
 
+const invalidField = 'Invalid data. Verify that you have provided a valid category and whether you have provided a duplicated product.'
+
 const nonExistentProductErrorInfo = productId => `The product with ID ${productId} doesn't exist`
 
 const notFoundProductsErrorInfo = 'Not found products'
 
-export { productCreationErrorInfo, nonExistentProductErrorInfo, notFoundProductsErrorInfo };
+export { productCreationErrorInfo, nonExistentProductErrorInfo, notFoundProductsErrorInfo, invalidField };

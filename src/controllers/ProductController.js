@@ -4,6 +4,7 @@ import {
   productCreationErrorInfo,
   nonExistentProductErrorInfo,
   notFoundProductsErrorInfo,
+  invalidField,
 } from "../utils/error/generateProductInfo.js";
 import EError from "../utils/error/enum.js";
 
@@ -74,9 +75,17 @@ class ProductController {
         rating,
         owner: req.user.email
       });
-      return res.sendSuccess(201, {
-        response: newProduct,
-      });
+      if (newProduct) {
+        return res.sendSuccess(201, {
+        product: newProduct,
+      })} else {
+        CustomError.createError({
+          name: "Product creation error",
+          cause: invalidField,
+          message: "Error trying to create product",
+          code: EError.BAD_REQUEST_ERROR,
+        });
+      }
     } catch (error) {
       next(error)
     }

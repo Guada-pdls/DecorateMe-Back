@@ -4,7 +4,7 @@ import EErrors from "../utils/error/enum.js";
 import { nonExistentProductErrorInfo } from "../utils/error/generateProductInfo.js";
 import { notFoundCarts, invalidUnits, nonExistentCart, nonExistentProductInCart, emptyCart, invalidStocks } from "../utils/error/generateCartInfo.js"
 import { cartService, productService } from "../service/index.js";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 class CartController {
   getCarts = async (req, res, next) => {
@@ -119,6 +119,10 @@ class CartController {
         message: "Error getting cart",
         code: EErrors.NOT_FOUND_ERROR
       })
+      
+      if (cart.length === 0) {
+        return res.sendSuccess(200, { _id: id, products: [] })
+      }
 
       return res.sendSuccess(200, cart[0]);
     } catch (error) {
@@ -256,7 +260,7 @@ class CartController {
     }
   };
 
-  clearCart = async (req, res) => {
+  clearCart = async (req, res, next) => {
     try {
       let cartId = req.params.cid;
       let cartFound = await cartService.getCart(cartId);
@@ -276,7 +280,7 @@ class CartController {
     }
   };
 
-  purchase = async (req, res) => {
+  purchase = async (req, res, next) => {
     try {
       const cartId = req.params.cid;
       const cart = await cartService.getCart(cartId);
