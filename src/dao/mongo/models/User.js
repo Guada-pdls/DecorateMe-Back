@@ -9,7 +9,7 @@ let schema = new Schema({
   photo: {
     type: String,
     default:
-      `${__dirname}/../public/img/default.jpg`,
+      `${__dirname}/../public/img/profile/default.jpg`,
   },
   email: { type: String, required: true, unique: true, index: true },
   age: { type: Number },

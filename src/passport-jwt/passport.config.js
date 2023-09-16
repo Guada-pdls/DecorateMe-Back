@@ -91,8 +91,10 @@ const initializePassport = () => {
           let user = await userService.getUserByEmail(username);
           if (!user) {
             let cart = await cartService.createCart();
+            const photo = req.file && req.file.path
             let user = await userService.createUser({
               ...req.body,
+              photo,
               cid: cart._id,
             });
             delete user.password;
