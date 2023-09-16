@@ -131,7 +131,7 @@ class UserController {
 
   login = (req, res) => res.sendSuccess(200, { user: req.user });
 
-  register = (req, res) => res.sendSuccess(201, "User registred successfully");
+  register = (req, res) => res.sendSuccess(201, { user: req.user });
 
   logout = async (req, res) => {
     try {

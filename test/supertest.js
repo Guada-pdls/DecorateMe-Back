@@ -21,23 +21,24 @@ let cookie, userId, productId, cartId
 
 describe('Testing DecorateMe', () => {
 	describe('Test de session', () => {
-		it('POST /api/session/register debe registrar un usuario correctamente', async () => {
-			const { ok, statusCode, _body } = await requester.post('/api/session/register').send(mockUser)
-			expect(ok).to.be.true
-			expect(statusCode).to.be.equal(201)
-			expect(_body.success).to.be.true
-		})
-		// it('POST /api/session/register debe registrar un usuario con foto correctamente', async () => {
-		// 	const { ok, statusCode, _body } = await requester.post('/api/session/register')
-				// .field('first_name', mockUser.first_name)
-				// .field('last_name', mockUser.last_name)
-				// .field('email', mockUser.email)
-				// .field('password', mockUser.password)
-		// 		.attach('photo', './test/profile.jpg')
+		// it('POST /api/session/register debe registrar un usuario correctamente', async () => {
+		// 	const { ok, statusCode, _body } = await requester.post('/api/session/register').send(mockUser)
 		// 	expect(ok).to.be.true
 		// 	expect(statusCode).to.be.equal(201)
 		// 	expect(_body.success).to.be.true
 		// })
+		it('POST /api/session/register debe registrar un usuario con foto correctamente', async () => {
+			const { ok, statusCode, _body } = await requester.post('/api/session/register')
+				.field('first_name', mockUser.first_name)
+				.field('last_name', mockUser.last_name)
+				.field('email', mockUser.email)
+				.field('password', mockUser.password)
+				.attach('photo', './test/profile.jpg')
+			console.log(_body)
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(201)
+			expect(_body.success).to.be.true
+		})
 		it('POST /api/session/login debe loguear al usuario correctamente, generar un token y setear una cookie', async () => {
 			const { ok, statusCode, _body, headers } = await requester.post('/api/session/login').send(mockUser)
 			expect(ok).to.be.true
