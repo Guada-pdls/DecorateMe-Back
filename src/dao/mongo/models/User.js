@@ -23,7 +23,7 @@ let schema = new Schema({
   cid: { type: Types.ObjectId, ref: 'carts', unique: true },
   documents: {
     type: [{
-      name: { type: String, required: true, enum: ['identification', 'adress proof', 'account statement proof'] },
+      name: { type: String, required: true, enum: ['identification', 'address proof', 'account statement proof'] },
       reference: { type: String, required: true }
     }],
     default: [],

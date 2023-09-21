@@ -40,7 +40,6 @@ const initializePassport = () => {
           return done(null, false, 'Not logged');
         }
       } catch (error) {
-        logger.error(error.message);
         return done(error, false);
       }
     })
@@ -69,11 +68,13 @@ const initializePassport = () => {
             return done(null, false, 'Invalid email or password');
           }
 
+          user.last_connection = 'now'
+          user.save()
+
           req.user = new UserDTO(user)
 
           return done(null, { ...new UserDTO(user) });
         } catch (error) {
-          logger.error(error.message);
           done(error, false);
         }
       }
@@ -97,7 +98,6 @@ const initializePassport = () => {
               photo,
               cid: cart._id,
             });
-            delete user.password;
             return done(null, user);
           }
           return done(null, false); // Redirecciona

@@ -66,21 +66,62 @@ describe('Testing DecorateMe', () => {
 			expect(_body.success).to.be.true
 		})
 	})
-	describe('Test de products', () => {
+	describe('Test de users', () => {
 		before(async () => {
 			// Accedo como admin para tener permisos
 			const { headers } = await requester.post('/api/session/login').send({
 				email: 'guadita@admin.com',
-        password: 'Hola123$'
+				password: 'Hola123$'
 			})
-      const cookieResult = headers['set-cookie'][0]
-      cookie = {
-        name: cookieResult.split('=')[0],
-        value: cookieResult.split('=')[1]
-      }
-      expect(cookie.name).to.be.ok
-      expect(cookie.value).to.be.ok
+			const cookieResult = headers['set-cookie'][0]
+			cookie = {
+				name: cookieResult.split('=')[0],
+				value: cookieResult.split('=')[1]
+			}
+			expect(cookie.name).to.be.ok
+			expect(cookie.value).to.be.ok
 		})
+		it('GET /api/users debe traer todos los usuarios', async () => {
+			const { ok, statusCode, _body } = await requester.get('/api/users').set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response.users).to.be.an('array')
+		})
+		it('GET /api/users/:uid debe traer un usuario correctamente', async () => {
+			const { ok, statusCode, _body } = await requester.get(`/api/users/${userId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response.user).to.be.an('object')
+		})
+		it('PUT /api/users/:uid debe modificar un usuario correctamente', async () => {
+			const { ok, statusCode, _body } = await requester.put(`/api/users/${userId}`).send({ last_name: 'Changed' }).set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.be.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response.user.last_name).to.be.equal('Changed')
+		})
+		it('POST /api/users/:uid/documents debe postear varios documentos correctamente', async () => {
+			const { ok, statusCode, _body } = await requester.post(`/api/users/${userId}/documents`)
+			.attach('identification', './test/profile.jpg')
+			.attach('address proof', './test/Sistema+de+archivos.pdf')
+			.attach('account statement proof', './test/Sistema+de+archivos.pdf')
+			.set('cookie', [`${cookie.name}=${cookie.value}`])
+			expect(ok).to.be.true
+			expect(statusCode).to.equal(200)
+			expect(_body.success).to.be.true
+			expect(_body.response.length).to.equal(3)
+		})
+		it('PUT /api/users/premium/:uid debe actualizar a premium el role del user', async () => {
+			const { ok, statusCode, _body } = await requester.put(`/api/users/premium/${userId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
+			console.log(_body)
+			expect(ok).to.be.true
+			expect(statusCode).to.equal(200)
+			expect(_body.success).to.be.true
+		})
+	})
+	describe('Test de products', () => {
 		it('GET /api/products debe traer todos los productos', async () => {
 			const { ok, statusCode, _body } = await requester.get('/api/products')
 			expect(ok).to.be.true
