@@ -7,7 +7,6 @@ import { compareSync, genSaltSync, hashSync } from "bcrypt";
 import CustomError from "../utils/error/CustomError.js";
 import { nonAuthorizedFields, nonExistentUserByEmail, nonExistentUserById, notAuthorizedToBePremium, passwordsDoNotMatch, repeatedPassword } from "../utils/error/generateUserInfo.js";
 import EErrors from "../utils/error/enum.js";
-import { logger } from "../utils/logger.js";
 
 class UserController {
   getUsers = async (req, res, next) => {

@@ -202,11 +202,6 @@ describe('Testing DecorateMe', () => {
 			expect(_body.response.products).to.be.empty
 		})
 	})
-	describe('Test de users', () => {
-		it('POST /users/:uid/documents debe agregar un documento al array de documents del usuario correctamente', async () => {
-				
-		})
-	})
 
 	// * Elimino el usuario que creé a lo largo del test
 
