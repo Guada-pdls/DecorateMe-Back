@@ -1,3 +1,4 @@
+import { __dirname } from "../../utils/utils.js";
 import User from "./models/User.js";
 
 class UserDao {

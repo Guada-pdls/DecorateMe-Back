@@ -1,7 +1,9 @@
 import { __dirname } from "../utils/utils.js";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUiExpress from 'swagger-ui-express'
-import MainRouter from "./Router.js";
+import { Router } from "express";
+
+const docsRouter = Router()
 
 const swaggerOptions = {
 	definition: {
@@ -15,12 +17,6 @@ const swaggerOptions = {
 }
 const specs = swaggerJsDoc(swaggerOptions)
 
+docsRouter.use('/', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-class DocsRouter extends MainRouter {
-	init() {
-		this.use('/', ['PUBLIC'], swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
-		// ! cb.apply is not a function
-	}
-}
-
-export default new DocsRouter();
+export default docsRouter;
