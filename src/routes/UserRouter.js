@@ -1,9 +1,8 @@
 import MainRouter from './Router.js';
 import UserController from '../controllers/UserController.js';
 import uploader from '../utils/uploader.js';
-// import passportCall from '../middlewares/passportCall.js';
 
-const { getUsers, getUser, updateUser, deleteUser, uploadDocuments, changeRole } = UserController;
+const { getUsers, getUser, updateUser, deleteUser, uploadDocuments, changeRole, cleanUsers } = UserController;
 
 class UserRouter extends MainRouter {
   init() {
@@ -18,6 +17,7 @@ class UserRouter extends MainRouter {
     ]), uploadDocuments); 
     this.put('/premium/:uid', ['USER', 'ADMIN'], changeRole);
     this.delete('/:uid', ['ADMIN'], deleteUser); // y USER para borrar cuenta -->
+    this.delete('/', ['ADMIN'], cleanUsers)
   }
 }
 

@@ -68,7 +68,7 @@ const initializePassport = () => {
             return done(null, false, 'Invalid email or password');
           }
 
-          user.last_connection = 'now'
+          user.last_connection = Date.now()
           user.save()
 
           req.user = new UserDTO(user)

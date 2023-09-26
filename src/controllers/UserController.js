@@ -242,7 +242,7 @@ class UserController {
       if (!user) {
         CustomError.createError({
           name: "Send email error",
-          cause: nonExistentUser(email),
+          cause: nonExistentUserByEmail(email),
           message: "Error sending email",
           code: EErrors.BAD_REQUEST_ERROR
         })
@@ -288,6 +288,25 @@ class UserController {
     }
   }
 
+  cleanUsers = async (req, res, next) => {
+    try {
+      const allUsers = await userService.getUsers()
+      const deletedUsers = []
+      const deadline = Date.now() - ( 60 * 60 * 60 * 24 * 2 ) // 2 days
+      for (const user of allUsers) {
+        if (user.last_connection < deadline || typeof user.last_connection === 'undefined') {
+          await userService.deleteUser(user._id)
+          sendMail(user.email, "Deleted user account", `
+          <p>We have deleted your DecorateMe account due to inactivity.</p>
+          `)
+          deletedUsers.push(user)
+        }
+      }
+      res.sendSuccess(200, { deletedUsers })
+    } catch (error) {
+      next(error)
+    }
+  }
 
 }
 

@@ -7,6 +7,7 @@ import {
   invalidField,
 } from "../utils/error/generateProductInfo.js";
 import EError from "../utils/error/enum.js";
+import sendMail from "../utils/sendMail.js";
 
 class ProductController {
   getProducts = async (req, res, next) => {
@@ -122,6 +123,11 @@ class ProductController {
       let id = req.params.pid;
       let product = await productService.deleteProduct(id);
       if (product) {
+        if (product.owner !== 'admin') {
+          sendMail(product.owner, 'Product deleted', `
+            <p>The product "${product.name}" has been deleted.</p>
+          `)
+        }
         return res.sendSuccess(200, `Product '${product._id}' deleted`);
       } else {
         CustomError.createError({
