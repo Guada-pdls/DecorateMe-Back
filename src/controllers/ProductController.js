@@ -56,12 +56,13 @@ class ProductController {
 
   createProduct = async (req, res, next) => {
     try {
-      let { name, description, category, price, thumbnail, stock, rating } =
+      let { name, description, category, price, stock, rating } =
         req.body;
+      let thumbnail = req.file?.path
       if (!name || !description || !category || !price || !thumbnail) {
         CustomError.createError({
           name: "Product creation error",
-          cause: productCreationErrorInfo(product),
+          cause: productCreationErrorInfo({ name, description, category, price, thumbnail }),
           message: "Error trying to create product",
           code: EError.INVALID_TYPE_ERROR,
         });

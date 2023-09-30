@@ -4,9 +4,11 @@ import { cartService, userService } from "../service/index.js";
 import config from "../config/config.js";
 import sendMail from "../utils/sendMail.js";
 import { compareSync, genSaltSync, hashSync } from "bcrypt";
+import fs from "fs";
 import CustomError from "../utils/error/CustomError.js";
 import { nonAuthorizedFields, nonExistentUserByEmail, nonExistentUserById, notAuthorizedToBePremium, passwordsDoNotMatch, repeatedPassword } from "../utils/error/generateUserInfo.js";
 import EErrors from "../utils/error/enum.js";
+import deleteFile from "../utils/deleteFile.js";
 
 class UserController {
   getUsers = async (req, res, next) => {
@@ -199,10 +201,17 @@ class UserController {
           code: EErrors.NOT_FOUND_ERROR
         })
       }
-      let deleteCart = await cartService.deleteCart(cid);
-      let deleteUser = await userService.deleteUser(uid);
+      let deletedCart = await cartService.deleteCart(cid);
+      let deletedUser = await userService.deleteUser(uid);
 
-      if (deleteUser && deleteCart) {
+      let deletedPhoto = user.photo ? deleteFile(user.photo) : true
+      let deletedDocuments;
+      if (user.documents) {
+        user.documents.forEach(doc => deleteFile(doc.reference))
+        deletedDocuments = true
+      }
+
+      if (deletedUser && deletedCart && deletedPhoto && deletedDocuments) {
         return res.sendSuccess(200, `User ${user._id} deleted`);
       }
     } catch (error) {

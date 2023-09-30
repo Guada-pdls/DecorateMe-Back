@@ -10,8 +10,8 @@ const validateCart = async (req, res, next) => {
       if (requestedCart !== userCart) {
         CustomError.createError({
           name: 'Validation Error',
-          cause: 'Invalid cart',
-          message: 'Carts do not match',
+          cause: 'Carts do not match',
+          message: 'Invalid cart',
           code: EErrors.VALIDATION_ERROR
         })
       }

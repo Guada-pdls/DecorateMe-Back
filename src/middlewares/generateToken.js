@@ -8,7 +8,7 @@ export default (req, res, next) => {
 		config.SECRET_JWT
 	)
 	res.cookie('token', token, {
-		maxAge: 60 * 60 * 24 * 7,
+		maxAge: 60 * 60 * 60 * 24 * 7,
 		httpOnly: true
 	})                    
 	next()

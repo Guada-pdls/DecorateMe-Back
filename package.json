@@ -5,8 +5,8 @@
   "main": "product-class.js",
   "type": "module",
   "scripts": {
-    "start": "node ./src/app.js --mode production",
-    "dev": "nodemon ./src/app.js --mode development",
+    "start": "node ./src/server.js --mode production",
+    "dev": "nodemon ./src/server.js --mode development",
     "test": "mocha test/supertest.js"
   },
   "repository": {

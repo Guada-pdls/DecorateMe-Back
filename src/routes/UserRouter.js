@@ -6,8 +6,8 @@ const { getUsers, getUser, updateUser, deleteUser, uploadDocuments, changeRole, 
 
 class UserRouter extends MainRouter {
   init() {
-    this.get('/', ['ADMIN'], getUsers);
-    this.get('/:uid', ['ADMIN'], getUser);
+    this.get('/', ['PUBLIC'], getUsers);
+    this.get('/:uid', ['PUBLIC'], getUser);
     this.put('/:uid', ['USER', 'ADMIN'], updateUser); // Poder cambiar contraseña -->
     this.post('/:uid/documents', ['USER', 'ADMIN'],  // TODO middleware para corroborar que el user sea el propietario de la cuenta
     uploader.fields([

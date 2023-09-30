@@ -1,5 +1,7 @@
 ### GET ALL
 GET http://localhost:8080/api/products
+###
+GET http://localhost:8080/api/products?page=1
 
 ### GET ONE
 GET http://localhost:8080/api/products/64ebb2d8ced3b9fa1f0e2700

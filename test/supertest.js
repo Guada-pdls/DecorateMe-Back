@@ -130,7 +130,13 @@ describe('Testing DecorateMe', () => {
 			expect(_body.response.products.docs).to.be.an('array')
 		})
 		it('POST /api/products debe crear un producto correctamente', async () => {
-			const { ok, statusCode, _body } = await requester.post('/api/products').send(mockProduct).set('cookie', [`${cookie.name}=${cookie.value}`])
+			const { ok, statusCode, _body } = await requester.post('/api/products')
+			.field('name', mockProduct.name)
+			.field('description', mockProduct.description)
+			.field('price', mockProduct.price)
+			.field('category', mockProduct.category)
+			.attach('thumbnail', './test/profile.jpg')
+			.set('cookie', [`${cookie.name}=${cookie.value}`])
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(201)
 			expect(_body.success).to.be.true

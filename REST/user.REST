@@ -2,13 +2,13 @@
 GET http://localhost:8080/api/users/
 
 ###
-GET http://localhost:8080/api/users/345
+GET http://localhost:8080/api/users/650cc4548b09581ce0f34364
 
 ### change role
 PUT http://localhost:8080/api/users/premium/64eba5eb9fa0b87e89f04573/
 
 
 ###
-DELETE http://localhost:8080/api/users/650478ac646efe9522f34c2b
+DELETE http://localhost:8080/api/users/651619eeab392dddc655e7af
 ### Cleaner
 DELETE http://localhost:8080/api/users
