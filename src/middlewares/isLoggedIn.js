@@ -1,3 +1,11 @@
+import CustomError from "../utils/error/CustomError.js"
+import EErrors from "../utils/error/enum.js"
+
 export default (req, res, next) => {
-    req.cookies.token ? res.status(401).json({ error: 'You are already logged in'}) : next()
+	req.cookies.token ? CustomError.createError({
+		name: 'Login Error',
+		cause: 'You are already logged in',
+		message: 'Error creating session',
+		code: EErrors.VALIDATION_ERROR
+	}) : next()
 }

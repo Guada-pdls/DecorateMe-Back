@@ -1,0 +1,277 @@
+paths:
+  /api/cart/:
+    get: 
+      summary: Obtiene todos los carritos. Solo disponible para el admin.
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: Carritos obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart' 
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '500':
+          description: Error interno del servidor.
+  /api/cart/{cid}:
+    get:
+      summary: Obtiene un carrito a partir de su id. Solo disponible para el admin o para el usuario/premium propietario del carrito.
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a obtener.
+          schema:
+            $type: string
+      responses:
+        '200':
+          description: Carrito obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Validación incorrecta. Probablemente estás solicitando un carrito que no te pertenece.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Carrito no encontrado.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina todo los productos de un carrito a partir de su id. Solo disponible para el usuario/premium propietario del carrito.
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a vaciar.
+          schema:
+            $type: String
+      responses:
+        '200':
+          description: Carrito vaciado correctamente
+          content:
+            application/json:
+              schema: 
+                type: object
+                $ref: '#/components/schemas/EmptyCart'
+        '400':
+          description: Validación incorrecta. Probablemente estás intentando vaciar un carrito que no te pertenece.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Carrito no encontrado.
+        '500':
+          description: Error interno del servidor.
+  /api/cart/{cid}/product/{pid}/{units}:
+    put:
+      summary: Añade cierta cantidad de un producto a un carrito, a través de sus identificadores. Solo disponible para el propietario del carrito.
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a agregarle productos.
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a añadir.
+          schema:
+            $type: string
+        - name: units
+          in: path
+          required: false
+          description: Cantidad de unidades a agregarse.
+          schema:
+            $type: integer
+      responses:
+        '200':
+          description: Unidades agregadas correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Validación incorrecta. Probablemente estás intentando agregar a un carrito que no te pertenece.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Carrito o producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina cierta cantidad de un producto de un carrito, a través de sus identificadores. Solo disponible para el propietario del carrito.
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a quitarle productos.
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a eliminar.
+          schema:
+            $type: string
+        - name: units
+          in: path
+          required: false
+          description: Cantidad de unidades a eliminarse.
+          schema:
+            $type: integer
+      responses:
+        '200':
+          description: Unidades eliminadas correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyCart'
+        '400':
+          description: Validación incorrecta. Probablemente estás intentando eliminar de un carrito que no te pertenece.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Carrito o producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+  /api/cart/{cid}/purchase:
+    post:
+      summary: Crea un ticket de compra a partir del id del cart. Solo disponible para el usuario propietario del carrito.
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a obtener.
+          schema:
+            $type: string
+      responses:
+        '201':
+          description: Ticket creado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Validación incorrecta. Probablemente estás intentando comprar un carrito que está vacío, no te pertenece, o sus productos carecen de stock.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Carrito no encontrado.
+        '500':
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identificador del carrito, autogenerado por Mongo.
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartProduct'
+          description: Lista de productos del carrito.
+    EmptyCart:
+      type: object
+      properties:
+        _id:
+          type: string
+        products:
+          type: array
+        description: Lista de productos del carrito.
+      example:
+        _id: 64ecbb1dadd87b581f7eb3bc
+        products: []
+    CartProduct:
+      type: object
+      properties:
+        pid:
+          type: String
+          description: Id del producto, autogenerado de Mongo. Referenciado a colección products.
+        units:
+          type: integer
+          description: Cantidad de unidades del producto.
+        name:
+          type: String
+          description: Nombre del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        category:
+         type: String
+         description: Categoría del producto. Puede ser Lightning, Wall Deco, Accessories, Textile, Art, Nature o Furniture.
+        price:
+          type: Number
+          description: Precio del producto.
+        thumbnail:
+          type: String
+          description: Url de la imagen del producto.
+        stock:
+          type: Number
+          description: Stock disponible del producto.
+      required:
+        - products
+      example:
+        pid: 64ebb295ced3b9fa1f0e26fd
+        units: 1
+        name: Geometric Throw Pillow
+        description: Soft and cozy decorative throw pillow with geometric patterns
+        category: Textile
+        price: 19.99
+        thumbnail: url
+        stock: 10
+    Ticket:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identificador del ticket, autogenerado por Mongo.
+        purchase_date:
+          Type: date
+          description: Fecha de compra del ticket.
+        amount:
+          type: number
+          description: Monto total del ticket.
+        purchaser:
+          type: string
+          description: Email del comprador.
+      required:
+        - purchase_date
+        - amount
+        - purchaser
+      example:
+        _id: 64ecbb1dadd87b581f7
+        purchase_date: 9/4/2023
+        amount: 19.99
+        purchaser: email@example.com

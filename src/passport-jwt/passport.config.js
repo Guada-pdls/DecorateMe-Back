@@ -54,7 +54,7 @@ const initializePassport = () => {
       async (req, username, password, done) => {
         try {
           if (req.cookies.token) {
-            return done('You are already logged in', false)
+            return done(null, false, 'You are already logged in')
           }
 
           let user = await userService.getUserByEmail(username);
@@ -123,7 +123,9 @@ const initializePassport = () => {
         try {
           let one = await userService.getUserByEmail(profile.emails[0].value);
           if (one) {
-            req.user = one;
+            one.last_connection = Date.now();
+            one.save();
+            req.user = new UserDTO(one);
             return done(null, one);
           }
           if (!one) {
@@ -135,9 +137,10 @@ const initializePassport = () => {
               email: profile.emails[0].value,
               photo: profile.photos[0].value,
               cid: cart._id,
+              last_connection: Date.now()
             });
-            req.user = user;
-            return done(null, user);
+            req.user = new UserDTO(user);
+            return done(null, { ...new UserDTO(user) });
           }
         } catch (error) {
           logger.error(error.message);

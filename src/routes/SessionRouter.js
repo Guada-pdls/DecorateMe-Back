@@ -53,7 +53,7 @@ class SessionRouter extends MainRouter {
         failureRedirect: 'http://localhost:5173/login'
       }
     ), generateToken, (req, res) => {
-      return res.redirect('http://localhost:5173/')
+      res.redirect('http://localhost:5173/login/google')
     })
     
   }

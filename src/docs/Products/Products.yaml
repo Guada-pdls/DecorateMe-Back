@@ -1,0 +1,229 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Productos obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Error interno del servidor.
+    post:
+      summary: Crea un producto. Solo disponible para usuarios premium y admin.
+      tags:
+        - Products
+      responses:
+        '201':
+          description: Producto creado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Campos requeridos.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '500':
+          description: Error interno del servidor.
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto a partir de su id.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a obtener.
+          schema:
+            $type: String
+      responses:
+        '200': 
+          description: Producto obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+    put:
+      summary: Modifica un producto a partir de su id. Solo disponible para el owner del producto o el admin.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: id del producto a modificar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        '200':
+          description: Producto modificado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Validación incorrecta.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un producto a partir de su id. Solo disponible para el owner del producto o el admin.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a eliminar.
+          schema:
+            $type: String
+      responses:
+        '200':
+          description: Producto eliminado correctamente.
+        '400':
+          description: Validación incorrecta.
+        '401':
+          description: No autenticado.
+        '403':
+          description: No autorizado.
+        '404':
+          description: Producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+
+# Components
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: String
+          description: Identificador del producto, autogenerado por Mongo.
+        name:
+          type: String
+          description: Nombre del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        category:
+         type: String
+         description: Categoría del producto. Puede ser Lightning, Wall Deco, Accessories, Textile, Art, Nature o Furniture.
+        price:
+          type: Number
+          description: Precio del producto.
+        thumbnail:
+          type: String
+          description: Url de la imagen del producto.
+        stock:
+          type: Number
+          description: Stock disponible del producto.
+        rating:
+          type: Number
+          description: Puntuación del producto.
+        owner:
+          type: String
+          description: Email del usuario premium o admin que lo ha creado.
+      required:
+        - name
+        - description
+        - category
+        - price
+        - thumbnail
+      example:
+        _id: 648756a3387dbab73002f32e
+        name: Silla
+        description: Silla de madera
+        category: Furniture
+        price: 100
+        thumbnail: url
+        stock: 100
+        rating: 5
+        owner: admin
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        name:
+          type: String
+          description: Nombre del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        category:
+         type: String
+         description: Categoría del producto. Puede ser Lightning, Wall Deco, Accessories, Textile, Art, Nature o Furniture.
+        price:
+          type: Number
+          description: Precio del producto.
+        thumbnail:
+          type: String
+          description: Url de la imagen del producto.
+        stock:
+          type: Number
+          description: Stock disponible del producto.
+        rating:
+          type: Number
+          description: Puntuación del producto.
+      example:
+        name: 'Espejo'
+        description: 'Espejo 40x150'
+        category: 'Wall Deco'
+        price: 100
+        thumbnail: url
+        stock: 25
+        rating: 5
+    updateProduct:
+      type: object
+      properties:
+        name:
+          type: String
+          description: Nombre del producto.
+        description:
+          type: String
+          description: Descripción del producto.
+        category:
+         type: String
+         description: Categoría del producto. Puede ser Lightning, Wall Deco, Accessories, Textile, Art, Nature o Furniture.
+        price:
+          type: Number
+          description: Precio del producto.
+        thumbnail:
+          type: String
+          description: Url de la imagen del producto.
+        stock:
+          type: Number
+          description: Stock disponible del producto.
+        rating:
+          type: Number
+          description: Puntuación del producto.
+      example:
+        description: 'Espejo 40x160'

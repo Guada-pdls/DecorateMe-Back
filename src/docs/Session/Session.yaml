@@ -1,0 +1,65 @@
+paths:
+  /api/session/login:
+    post:
+      summary: Crea una session, un token y su cookie.
+      tags:
+        - Session
+      responses:
+        '200': 
+          description: Logueado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Error de autenticación. Probablemente estás intentando generar una nueva session cuando ya estás logueado, no enviaste todos los datos requeridos o son inválidos.
+              
+# Components
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identificador de usuario, autogenerado por Mongo.
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        full_name:
+          type: string
+          description: Nombre completo del usuario
+        photo: 
+          type: string
+          description: Path a la foto de perfil
+        email:
+          type: string
+          description: Email del usuario
+        last_connection:
+          type: integer
+          description: Date de la última conexión
+        documents: 
+          type: array
+          description: Lista de documentos añadidos por el usuario
+        # TODO item de document
+        cid:
+          type: String
+          description: Identificador del carrito del usuario.
+        role:
+          type: string
+          description: Rol del usuario. Puede ser user, premium o admin
+      example:
+        _id: "64f4ebfd610eb2aeb4a15749"
+        first_name: "User"
+        last_name: "Example"
+        full_name: "User Example"
+        email: "user@example.com"
+        photo: "url"
+        last_connection: "1696442075802"
+        documents: []
+        role: "user"
+        cid: "64f4ebfd620eb2aeb9a15747"
