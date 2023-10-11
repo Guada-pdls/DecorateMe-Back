@@ -34,7 +34,7 @@ The server is based on a layered design, oriented to MVC, and its code will cont
 - swagger-jsdoc
 - swagger-ui-express
 - winston
-
+https://decorateme.onrender.com/api/products
 ##### Dev dependencies:
 
 - artillery
