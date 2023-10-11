@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { logger } from "../utils/logger.js";
 import config from "../config/config.js";
 import CustomError from "../utils/error/CustomError.js";
@@ -39,7 +39,6 @@ class MainRouter {
   };
 
   handlePolicies = (policies) => (req, res, next) => {
-    logger.debug(req.cookies.token)
     if (policies[0] === "PUBLIC") return next();
     if (!req.cookies.token) {
       CustomError.createError({
@@ -49,8 +48,17 @@ class MainRouter {
         code: EErrors.AUTH_ERROR
       })
     }
-    let user = verify(req.cookies.token, config.SECRET_JWT);
-    if (!policies.includes(user.role?.toUpperCase())) {
+    let user = jwt.verify(req.cookies.token, config.SECRET_JWT);
+    if (!user) {
+      CustomError.createError({
+        name: 'Token Error',
+        cause: 'Invalid token',
+        message: 'Access denied',
+        code: EErrors.VALIDATION_ERROR
+      })
+    }
+    const userRole = user.role.trim().toUpperCase()
+    if (!policies.includes(userRole)) {
       CustomError.createError({
         name: 'Policies error',
         cause: 'Unauthorized',

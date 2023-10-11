@@ -8,6 +8,8 @@ import {
 } from "../utils/error/generateProductInfo.js";
 import EError from "../utils/error/enum.js";
 import sendMail from "../utils/sendMail.js";
+import deleteFile from "../utils/deleteFile.js";
+import { logger } from "../utils/logger.js";
 
 class ProductController {
   getProducts = async (req, res, next) => {
@@ -129,6 +131,8 @@ class ProductController {
             <p>The product "${product.name}" has been deleted.</p>
           `)
         }
+        let deleteThumbnail = deleteFile(product.thumbnail)
+        if (!deleteThumbnail) logger.warning(`The thumbnail "${product.name} hasn't been deleted`)
         return res.sendSuccess(200, `Product '${product._id}' deleted`);
       } else {
         CustomError.createError({

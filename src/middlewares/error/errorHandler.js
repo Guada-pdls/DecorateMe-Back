@@ -3,6 +3,7 @@ import { logger } from "../../utils/logger.js";
 
 const errorHandler = (error, req, res, next) => {
   const response = { success: false, error: `${error.message} - ${error.cause}` }
+  console.log(response)
   logger.error(response.error);
   switch (error.code) {
     case EErrors.INVALID_TYPE_ERROR:

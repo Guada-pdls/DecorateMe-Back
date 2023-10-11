@@ -29,4 +29,4 @@ Content-Type: application/json
 }
 
 ### DELETE
-DELETE  http://localhost:8080/api/products/648b9b6f3b4ab23a82357a82
+DELETE  http://localhost:8080/api/products/65249c96be78f0b5f231b967

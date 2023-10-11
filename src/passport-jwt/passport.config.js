@@ -102,7 +102,6 @@ const initializePassport = () => {
           }
           return done(null, false); // Redirecciona
         } catch (error) {
-          logger.error(error);
           return done(error, false);
         }
       }

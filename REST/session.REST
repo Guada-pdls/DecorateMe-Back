@@ -6,7 +6,7 @@ POST http://localhost:8080/api/session/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "guadita@admin.com",
+    "email": "guada@admin.com",
     "password": "Hola123$"
 }
 
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/api/session/logout
+DELETE http://localhost:8080/api/session/logout
 
 ### Forgot password
 POST http://localhost:8080/api/session/forgot-password HTTP/1.1

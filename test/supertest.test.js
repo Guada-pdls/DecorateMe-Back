@@ -12,10 +12,9 @@ const mockUser = {
 }
 const mockProduct = {
 	name: 'Product 1',
-  description: 'Product 1 description',
-  price: 100,
-  category: 'Wall Deco',
-	thumbnail: 'http://example.com'
+	description: 'Product 1 description',
+	price: 100,
+	category: 'Wall Deco'
 }
 let cookie, userId, productId, cartId
 
@@ -27,7 +26,7 @@ describe('Testing DecorateMe', () => {
 				.field('last_name', mockUser.last_name)
 				.field('email', mockUser.email)
 				.field('password', mockUser.password)
-				.attach('photo', './test/profile.jpg')
+				.attach('photo', './test/files/profile.jpg')
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(201)
 			expect(_body.success).to.be.true
@@ -59,8 +58,8 @@ describe('Testing DecorateMe', () => {
 			expect(_body.success).to.be.true
 			expect(_body.response.user).to.have.property('_id')
 		})
-		it('GET /api/session/logout debe deslogear al usuario', async () => {
-			const { ok, statusCode, _body } = await requester.get('/api/session/logout').set('cookie', [`${cookie.name}=${cookie.value}`])
+		it('DELETE /api/session/logout debe deslogear al usuario', async () => {
+			const { ok, statusCode, _body } = await requester.delete('/api/session/logout').set('cookie', [`${cookie.name}=${cookie.value}`])
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(200)
 			expect(_body.success).to.be.true
@@ -70,7 +69,7 @@ describe('Testing DecorateMe', () => {
 		before(async () => {
 			// Accedo como admin para tener permisos
 			const { headers } = await requester.post('/api/session/login').send({
-				email: 'guadita@admin.com',
+				email: 'guada@admin.com',
 				password: 'Hola123$'
 			})
 			const cookieResult = headers['set-cookie'][0]
@@ -100,14 +99,14 @@ describe('Testing DecorateMe', () => {
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(200)
 			expect(_body.success).to.be.true
-			expect(_body.response.user.last_name).to.be.equal('Changed')
+			expect(_body.response.user.full_name).to.be.equal('Guada Changed')
 		})
 		it('POST /api/users/:uid/documents debe postear varios documentos correctamente', async () => {
 			const { ok, statusCode, _body } = await requester.post(`/api/users/${userId}/documents`)
-			.attach('identification', './test/profile.jpg')
-			.attach('address proof', './test/Sistema+de+archivos.pdf')
-			.attach('account statement proof', './test/Sistema+de+archivos.pdf')
-			.set('cookie', [`${cookie.name}=${cookie.value}`])
+				.attach('identification', './test/files/profile.jpg')
+				.attach('address proof', './test/files/Sistema+de+archivos.pdf')
+				.attach('account statement proof', './test/files/Sistema+de+archivos.pdf')
+				.set('cookie', [`${cookie.name}=${cookie.value}`])
 			expect(ok).to.be.true
 			expect(statusCode).to.equal(200)
 			expect(_body.success).to.be.true
@@ -115,7 +114,6 @@ describe('Testing DecorateMe', () => {
 		})
 		it('PUT /api/users/premium/:uid debe actualizar a premium el role del user', async () => {
 			const { ok, statusCode, _body } = await requester.put(`/api/users/premium/${userId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
-			console.log(_body)
 			expect(ok).to.be.true
 			expect(statusCode).to.equal(200)
 			expect(_body.success).to.be.true
@@ -131,12 +129,12 @@ describe('Testing DecorateMe', () => {
 		})
 		it('POST /api/products debe crear un producto correctamente', async () => {
 			const { ok, statusCode, _body } = await requester.post('/api/products')
-			.field('name', mockProduct.name)
-			.field('description', mockProduct.description)
-			.field('price', mockProduct.price)
-			.field('category', mockProduct.category)
-			.attach('thumbnail', './test/profile.jpg')
-			.set('cookie', [`${cookie.name}=${cookie.value}`])
+				.field('name', mockProduct.name)
+				.field('description', mockProduct.description)
+				.field('price', mockProduct.price)
+				.field('category', mockProduct.category)
+				.attach('thumbnail', './test/files/profile.jpg')
+				.set('cookie', [`${cookie.name}=${cookie.value}`])
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(201)
 			expect(_body.success).to.be.true
@@ -151,7 +149,7 @@ describe('Testing DecorateMe', () => {
 			expect(_body.response.product).to.have.property('_id')
 		})
 		it('PUT /api/products/:pid debe actualizar un producto', async () => {
-			const { ok, statusCode, _body } = await requester.put(`/api/products/${productId}`).send({...mockProduct, price: 99}).set('cookie', [`${cookie.name}=${cookie.value}`])
+			const { ok, statusCode, _body } = await requester.put(`/api/products/${productId}`).send({ ...mockProduct, price: 99 }).set('cookie', [`${cookie.name}=${cookie.value}`])
 			expect(ok).to.be.true
 			expect(statusCode).to.be.equal(200)
 			expect(_body.success).to.be.true
@@ -168,13 +166,13 @@ describe('Testing DecorateMe', () => {
 		before(async () => {
 			// Accedo como user
 			const { headers } = await requester.post('/api/session/login').send(mockUser)
-      const cookieResult = headers['set-cookie'][0]
-      cookie = {
-        name: cookieResult.split('=')[0],
-        value: cookieResult.split('=')[1]
-      }
-      expect(cookie.name).to.be.ok
-      expect(cookie.value).to.be.ok
+			const cookieResult = headers['set-cookie'][0]
+			cookie = {
+				name: cookieResult.split('=')[0],
+				value: cookieResult.split('=')[1]
+			}
+			expect(cookie.name).to.be.ok
+			expect(cookie.value).to.be.ok
 		})
 		it('GET /api/cart/:cid debe traer el carrito del usuario', async () => {
 			const { ok, statusCode, _body } = await requester.get(`/api/cart/${cartId}`).set('cookie', [`${cookie.name}=${cookie.value}`])
@@ -214,7 +212,7 @@ describe('Testing DecorateMe', () => {
 	after(async function () {
 		// Accedo como admin para tener permisos
 		const log = await requester.post('/api/session/login').send({
-			email: 'guadita@admin.com',
+			email: 'guada@admin.com',
 			password: 'Hola123$'
 		})
 		const cookieResult = log.headers['set-cookie'][0]

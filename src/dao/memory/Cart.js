@@ -27,7 +27,16 @@ class CartManager {
     return this.carts.find((cart) => cart.id === cartId);
   }
 
-  async addCart() {
+  getCartBill(cartId) {
+    const cart = this.carts.find((cart) => cart.id === cartId);
+    let total = 0
+    cart.products.forEach(prod => {
+      total += prod.price * prod.units
+    })
+    cart.totalCart = total
+  }
+
+  async createCart() {
     try {
       let cart = { products: [] };
       if (this.carts.length > 0) {
@@ -44,7 +53,7 @@ class CartManager {
     }
   }
 
-  async addProducts(cartId, data) {
+  async addProduct(cartId, data) {
     try {
       let cartFound = this.getCartById(cartId);
       if (!cartFound) {
@@ -84,7 +93,7 @@ class CartManager {
     }
   }
 
-  async deleteProducts(cartId, data) {
+  async deleteProduct(cartId, data) {
     try {
       let cartFound = this.getCartById(cartId);
       if (!cartFound) {
@@ -123,20 +132,24 @@ class CartManager {
       return null;
     }
   }
-}
 
-// async function managment() {
-//   let cartManager = new CartManager("./src/data/carts.json");
-//   await cartManager.getCarts();
-//   await cartManager.getCartById(3);
-//   await cartManager.addCart({
-//     products: [
-//       { pid: 1, quantity: 2 },
-//       { pid: 2, quantity: 2 },
-//     ],
-//   });
-// }
-// managment();
+  async clearCart(cartId) {
+    try {
+      const cart = await this.getCart(cartId)
+      if (typeof cart === 'object') {
+        const fileCarts = this.getCarts()
+        const remainingCarts = fileCarts.filter(cart => cart.id !== cartId);
+        cart.products = []
+        const carts = [...remainingCarts, cart]
+        await fs.promises.writeFile(this.path, JSON.stringify(varts, null, 2))
+        return 'Cart cleaned successfully'
+      }
+      return 'Cart not found'
+    } catch (error) {
+      
+    }
+  }
+}
 
 let cartManager = new CartManager("./src/data/carts.json");
 export default cartManager;

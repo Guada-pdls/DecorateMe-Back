@@ -18,11 +18,11 @@ class ChatManager {
 		}
 	}
 
-	getChats() {
+	getMessages() {
 		return this.chats
 	}
 
-	async addMessage(msg) {
+	async createMessage(msg) {
 		try {
 			this.chats.push(msg)
 			const data = JSON.stringify(this.chats, null, 2)

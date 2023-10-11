@@ -16,14 +16,13 @@ switch (config.PERSISTENCE) {
     break;
   case "MEMORY":
     const { default: CartDaoMemory } = await import("./memory/Cart.js");
+    const { default: ProductDaoMemory } = await import("./memory/Products.js")
+    const { default: ChatDaoMemory } = await import("./memory/Chat.js")
 
     CartDao = CartDaoMemory;
+    ProductDao = ProductDaoMemory;
+    ChatDao = ChatDaoMemory;
 
-    break;
-
-  case "FILE":
-    break;
-  default:
     break;
 }
 

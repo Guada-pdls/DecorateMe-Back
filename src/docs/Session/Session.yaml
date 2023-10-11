@@ -13,6 +13,30 @@ paths:
                 $ref: '#/components/schemas/User'
         '403':
           description: Error de autenticación. Probablemente estás intentando generar una nueva session cuando ya estás logueado, no enviaste todos los datos requeridos o son inválidos.
+  /api/session/register:
+    post:
+      summary: Crea un usuario.
+      tags:
+        - Session
+      responses:
+        '201':
+          description: Usuario registrado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Error de autenticación. Probablemente estás intentando registrar un usuario ya existente, ingresaste una contraseña o email inválidos, te faltaron datos o estás logueado.
+  /api/session/logout:
+    delete:
+      summary: Elimina el token de la session.
+      tags:
+        - Session
+      responses:
+        '200': 
+          description: Usuario deslogeado correctamente.
+        '403':
+          description: Error de autenticación. No hay ninguna session activa.
               
 # Components
 
@@ -45,7 +69,6 @@ components:
         documents: 
           type: array
           description: Lista de documentos añadidos por el usuario
-        # TODO item de document
         cid:
           type: String
           description: Identificador del carrito del usuario.

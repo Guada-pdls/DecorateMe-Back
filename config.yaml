@@ -9,6 +9,17 @@ scenarios:
   - name: 'Sessions Flow (Register + login)'
     flow:
       - log: 'Creando usuario de prueba'
+      - get: 
+          url: /api/mocking/user
+          capture:
+            - json: '$.first_name'
+              as: 'first_name'
+            - json: '$.last_name'
+              as: 'last_name'
+            - json: '$.email'
+              as: 'email'
+            - json: '$.password'
+              as: 'password'
       - log: 'Registramos el usuario'
       - post:
           url: /api/session/register

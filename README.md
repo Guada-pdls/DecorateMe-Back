@@ -5,27 +5,47 @@ The server is based on a layered design, oriented to MVC, and its code will cont
 
 ## Getting started
 
-1. Clone this proyect.
-2. Go to the path of the proyect.
+1. Clone this project.
+2. Go to the path of the project.
 3. Install all dependencies: `npm install i`
-4. Run local enviroment: `npm run dev`
+4. Run local environment: `npm run dev`
 
 ### Required dependencies:
 
+- @faker-js/faker
+- artillery-plugin-metrics-by-endpoint
+- bcrypt
+- commander
+- cookie-parser
+- dotenv
 - express
-- express-handlebars
-- node-fetch
+- express-compression
+- express-session
+- jsonwebtoken
+- mongoose
+- mongoose-paginate-v2
+- multer
+- nodemailer
+- passport
+- passport-google-oauth2
+- passport-jwt
+- passport-local
 - socket.io
+- swagger-jsdoc
+- swagger-ui-express
+- winston
+
+##### Dev dependencies:
+
+- artillery
+- chai
+- mocha
 - nodemon
+- supertest
 
-## Functionalities
+## [Frontend Repository](https://github.com/Guada-pdls/DecorateMe-Front) 
 
-- Add products to the inventory.
-- Create cart.
-- Product Detail view: Add products to the cart and delete stock from products.
-- Cart view: Delete products from cart and add stock from products.
-- Chat.
-- ***
+ ***
 
 # Authors
 

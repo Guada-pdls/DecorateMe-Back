@@ -1,5 +1,6 @@
 import MainRouter from "./Router.js";
 import generateProduct from "../utils/mocks/generateProduct.js";
+import generateUser from "../utils/mocks/generateUser.js";
 
 class MockingRouter extends MainRouter {
 	init() {
@@ -10,7 +11,10 @@ class MockingRouter extends MainRouter {
 			}
 			res.send(products);
 		});
-		// this.get('/users', )
+		this.get('/user', ['PUBLIC'], async (req, res) => {
+			const user = generateUser()
+			res.send(user)
+		})
 	}
 }
 

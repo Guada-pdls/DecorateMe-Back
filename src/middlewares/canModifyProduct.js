@@ -12,7 +12,7 @@ export default async (req, res, next) => {
 		if (!(product.owner === req.user.email)) CustomError.createError({
 			name: 'Modify product error',
 			cause: 'Cannot modify product',
-			message: 'You must be the product owner or an admin to delete this',
+			message: 'You must be the product owner or an admin to modify this',
 			code: EErrors.VALIDATION_ERROR
 		})
 		next()

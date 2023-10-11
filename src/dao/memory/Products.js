@@ -17,7 +17,7 @@ export class ProductManager {
     }
   }
   
-  async addProduct(title, description, price, thumbnail, stock = 0) {
+  async createProduct(title, description, price, thumbnail, stock = 0) {
 
     try {
       let fileProducts = await this.getProducts() // Traigo los productos del archivo
@@ -39,7 +39,7 @@ export class ProductManager {
     }
   }
 
-  async getProductById(id) {
+  async getProduct(id) {
     try {
       const fileProducts = await this.getProducts()
       let productFound = fileProducts.find(prod => prod.id === id)
@@ -51,7 +51,7 @@ export class ProductManager {
 
   async deleteProduct(id) {
     try {
-      if (typeof await this.getProductById(id) === 'object') {
+      if (typeof await this.getProduct(id) === 'object') {
         const fileProducts = await this.getProducts()
         const remainingProducts = fileProducts.filter(prod => prod.id !== id)
         await fs.promises.writeFile(this.path, JSON.stringify(remainingProducts, null, 2))
@@ -65,7 +65,7 @@ export class ProductManager {
 
   async updateProduct(id, data) {
     try {
-      const product = await this.getProductById(id)
+      const product = await this.getProduct(id)
       if (typeof product === 'object') {
         const modifiedProduct = { ...product, ...data, id: id } // Creo un nuevo objeto con todas las propiedades del original y le agrego las de data. También reescribo el id para evitar que en data se pueda modificar.
 
@@ -87,22 +87,3 @@ export class ProductManager {
 }
 
 export const store = new ProductManager('./src/data/products.json')
-
-// const test = async () => {
-//   console.log(await store.addProduct('té', 'hoja en sobre', 8, 'sin imágen'))
-//   console.log(await store.addProduct('café', 'cafeína líquida', 12, 'sin imágen', 10))
-//   console.log(await store.addProduct('coca-cola', 'cafeína y azúcar', 20, 'sin imágen', 15))
-//   console.log(await store.addProduct('agua', 'agua', 10, 'sin imágen', 20))
-//   console.log(await store.addProduct('libreta', 'libreta', 30, 'sin imágen', 15))
-//   console.log(await store.addProduct('lapicera', 'lapicera', 10, 'sin imágen', 22))
-//   console.log(await store.addProduct('auriculares', 'auriculares', 39, 'sin imágen', 3))
-//   console.log(await store.addProduct('cargador', 'cargador', 23, 'sin imágen'))
-//   console.log(await store.addProduct('marcalibros', 'marcalibros', 2, 'sin imágen'))
-//   console.log(await store.addProduct('teclado', 'teclado', 49, 'sin imágen'))
-// console.log(await store.getProductById(9))
-// console.log(await store.updateProduct(9, {title: "ml", id:20}))
-// console.log(await store.deleteProduct(10))
-// console.log(await store.getProducts())
-// }
-
-// test()

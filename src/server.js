@@ -1,30 +1,39 @@
 import { Server } from "socket.io";
-import server from "./app.js";
+import app from "./app.js";
 import config from "./config/config.js";
 import { logger } from "./utils/logger.js";
-import { chatService } from "./service/index.js";
 import chat from "./utils/chat.js";
+import cluster from "node:cluster"
+import { cpus } from "node:os"
+import http from "http"
 
-let httpServer = server.listen(config.PORT, error => {
-  if (error) logger.error(error.message)
-  logger.info("Server listening on port " + config.PORT)
-});
+if (cluster.isPrimary) {
+  const processors = cpus().length;
 
-let io = new Server(httpServer, {
-  cors: {
-    origin: 'http://localhost:5173',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true
+  for (let i = 0; i < processors; i++) {
+    cluster.fork();
   }
-});
 
-io.on(
-  'connection',
-  async socket => {
-    logger.info(`client ${socket.client.id} connected`)
-    chat(socket, io)
-  }
-)
+  cluster.on('message', (worker, code, signal) => {
+    logger.error(`Message received from worker ${worker.process.pid}`);
+  });
+} else {
+  const httpServer = http.createServer(app);
 
+  httpServer.listen(config.PORT, () => {
+    logger.info("Server listening on port " + config.PORT);
+  });
 
-export default server;
+  const io = new Server(httpServer, {
+    cors: {
+      origin: 'http://localhost:5173',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true
+    }
+  });
+
+  io.on('connection', async (socket) => {
+    logger.info(`client ${socket.client.id} connected`);
+    chat(socket, io);
+  });
+}

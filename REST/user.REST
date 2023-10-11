@@ -2,7 +2,7 @@
 GET http://localhost:8080/api/users/
 
 ###
-GET http://localhost:8080/api/users/650cc4548b09581ce0f34364
+GET http://localhost:8080/api/users/64f4ebfd610eb2aeb9a15749
 
 ### change role
 PUT http://localhost:8080/api/users/premium/64eba5eb9fa0b87e89f04573/

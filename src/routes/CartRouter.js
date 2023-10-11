@@ -2,10 +2,10 @@ import MainRouter from "./Router.js";
 import CartController from "../controllers/CartController.js";
 import validateCart from "../middlewares/validateCart.js";
 import passportCall from "../middlewares/passportCall.js";
+import canAddProduct from "../middlewares/canAddProduct.js";
 
 const {
   getCarts,
-  getCart,
   getCartBill,
   addProduct,
   deleteProduct,
@@ -28,6 +28,7 @@ class CartRouter extends MainRouter {
       ["USER", "PREMIUM"],
       passportCall("jwt"),
       validateCart,
+      canAddProduct,
       addProduct
     );
     this.delete(

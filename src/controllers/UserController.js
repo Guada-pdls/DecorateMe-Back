@@ -4,7 +4,6 @@ import { cartService, userService } from "../service/index.js";
 import config from "../config/config.js";
 import sendMail from "../utils/sendMail.js";
 import { compareSync, genSaltSync, hashSync } from "bcrypt";
-import fs from "fs";
 import CustomError from "../utils/error/CustomError.js";
 import { nonAuthorizedFields, nonExistentUserByEmail, nonExistentUserById, notAuthorizedToBePremium, passwordsDoNotMatch, repeatedPassword } from "../utils/error/generateUserInfo.js";
 import EErrors from "../utils/error/enum.js";
@@ -87,9 +86,9 @@ class UserController {
       let userData = req.body;
       if (Object.entries(userData).length !== 0) {
         if (
-          !("cid" in userData) &&
-          !("role" in userData) &&
-          !("password" in userData)
+          (!("cid" in userData) &&
+            !("role" in userData) &&
+            !("password" in userData)) || req.user.role === "admin"
         ) {
           let user = await userService.updateUser(id, userData);
           return res.sendSuccess(200, { user: new UserDTO(user) });
@@ -129,16 +128,30 @@ class UserController {
 
       if (req.files) {
         for (const document in req.files) {
-          // TODO: validar que no se repita el document y que no pese más de 5mb 
+          
+          const sizeInMb = (parseInt(req.files[document][0].size) / 1024) / 1024
+          if (sizeInMb > 5) CustomError.createError({
+            name: 'Invalid size',
+            cause: 'Cannot add document',
+            message: 'The size of the file must be less than 5mb',
+            code: EErrors.BAD_REQUEST_ERROR
+          })
+
+          const existingDocument = user.documents.find(doc => doc.name === document)
+          if (existingDocument) CustomError.createError({
+            name: 'Invalid document',
+            cause: 'Cannot add a duplicated document',
+            message: 'Document already exists',
+            code: EErrors.BAD_REQUEST_ERROR
+          })
+
           user.documents.push({
             name: document,
             reference: req.files[document][0].path
           })
-          // if (!user.documents.includes({name: document})) {
-          // console.log(req.files[document][0])
         }
         user.save()
-        res.sendSuccess(200, user.documents )
+        res.sendSuccess(200, user.documents)
       } else {
         CustomError.createError({
           name: "Upload document error",
@@ -146,7 +159,7 @@ class UserController {
           message: "Error uploading documents",
           code: EErrors.NOT_FOUND_ERROR
         })
-      }      
+      }
     } catch (error) {
       next(error)
     }
@@ -191,7 +204,6 @@ class UserController {
     try {
       const uid = req.params.uid;
       let user = await userService.getUser(uid);
-      const cid = user.cid;
 
       if (!user) {
         CustomError.createError({
@@ -201,17 +213,19 @@ class UserController {
           code: EErrors.NOT_FOUND_ERROR
         })
       }
+      const cid = user.cid
+
       let deletedCart = await cartService.deleteCart(cid);
       let deletedUser = await userService.deleteUser(uid);
 
-      let deletedPhoto = user.photo ? deleteFile(user.photo) : true
+      !user.photo?.endsWith('default.jpg') && deleteFile(user.photo)
       let deletedDocuments;
       if (user.documents) {
         user.documents.forEach(doc => deleteFile(doc.reference))
         deletedDocuments = true
       }
 
-      if (deletedUser && deletedCart && deletedPhoto && deletedDocuments) {
+      if (deletedUser && deletedCart && deletedDocuments) {
         return res.sendSuccess(200, `User ${user._id} deleted`);
       }
     } catch (error) {
@@ -301,7 +315,7 @@ class UserController {
     try {
       const allUsers = await userService.getUsers()
       const deletedUsers = []
-      const deadline = Date.now() - ( 60 * 60 * 60 * 24 * 2 ) // 2 days
+      const deadline = Date.now() - (60 * 60 * 60 * 24 * 2) // 2 days
       for (const user of allUsers) {
         if (user.last_connection < deadline || typeof user.last_connection === 'undefined') {
           await userService.deleteUser(user._id)
