@@ -7,7 +7,7 @@ const requester = supertest('http://localhost:8080');
 const mockUser = {
 	first_name: 'Guada',
 	last_name: 'Example',
-	email: 'guada@example.com',
+	email: 'guada@gmail.com',
 	password: 'Hola123$'
 }
 const mockProduct = {
