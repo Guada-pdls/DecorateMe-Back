@@ -47,7 +47,7 @@ server.use(addLogger)
 
 server.use('/', router)
 
-server.use(errorHandler)
 server.use(notFoundHandler)
+server.use(errorHandler)
 
 export default server
