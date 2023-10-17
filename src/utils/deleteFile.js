@@ -7,7 +7,6 @@ export default path => {
 		fs.unlinkSync(path)
 		return true
 	} catch (error) {
-		console.log(error)
 		CustomError.createError({
 			name: "Delete file error",
 			cause: "No such file or directory",

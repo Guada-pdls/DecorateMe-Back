@@ -26,7 +26,6 @@ const generateProduct = () => {
     "Art",
     "Nature",
     "Furniture",]),
-    // category: getRandomCategory(),
     price: faker.commerce.price(),
     thumbnail: faker.image.url(),
     stock: faker.string.numeric({ min: 5, max: 100 }),
