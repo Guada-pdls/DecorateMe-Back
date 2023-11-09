@@ -235,7 +235,7 @@ class UserController {
 
   login = (req, res) => res.sendSuccess(200, { user: req.user });
 
-  register = (req, res) => res.sendSuccess(201, { user: req.user });
+  register = (req, res) => res.sendSuccess(201, { user: new UserDTO(req.user) });
 
   logout = async (req, res) => {
     try {

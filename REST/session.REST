@@ -6,7 +6,7 @@ POST http://localhost:8080/api/session/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "guada@admin.com",
+    "email": "guadapdls@admin.com",
     "password": "Hola123$"
 }
 
@@ -16,8 +16,8 @@ Content-Type: application/json
 
 {
     "first_name": "Guada",
-    "last_name": "Test",
-    "email": "guadapdls@gmail.com",
+    "last_name": "Admin",
+    "email": "guadapdls@admin.com",
     "password": "Hola123$",
     "age": 19
 }
