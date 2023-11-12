@@ -15,6 +15,7 @@ export default {
   PORT: process.env.PORT || 8080,
   MONGO_LINK: process.env.MONGO_LINK || "",
   PERSISTENCE: process.env.PERSISTENCE || "MONGO",
+  FRONT_DOMAIN: process.env.FRONT_DOMAIN || "",
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GMAIL_USER_APP: process.env.GMAIL_USER_APP || "",

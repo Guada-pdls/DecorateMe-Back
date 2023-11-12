@@ -26,7 +26,7 @@ if (cluster.isPrimary) {
 
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: config.FRONT_DOMAIN,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true
     }

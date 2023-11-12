@@ -12,20 +12,15 @@ import config from "./config/config.js";
 import { addLogger } from "./utils/logger.js";
 import session from "express-session";
 import compression from "express-compression";
-import { engine } from "express-handlebars";
 
 const server = express();
 config.connectDB();
 server.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: config.FRONT_DOMAIN,
     credentials: true,
   })
 );
-
-server.engine('handlebars', engine());
-server.set('view engine', 'handlebars');
-server.set('views', __dirname + '/views');
 
 server.use(cookieParser());
 server.use("/public", express.static("public"));

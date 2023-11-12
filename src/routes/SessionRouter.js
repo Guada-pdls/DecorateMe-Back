@@ -9,6 +9,7 @@ import isLoggedIn from "../middlewares/isLoggedIn.js";
 import generateToken from "../middlewares/generateToken.js";
 import validateResetPswToken from "../middlewares/validateResetPswToken.js";
 import uploader from "../utils/uploader.js";
+import config from "../config/config.js";
 
 const { register, login, logout, current, sendPswMail, resetPassword, pswResetTokenCookie } = UserController;
 
@@ -50,10 +51,10 @@ class SessionRouter extends MainRouter {
 
     this.get('/google/callback', ['PUBLIC'],
       passport.authenticate('google', {
-        failureRedirect: 'http://localhost:5173/login'
+        failureRedirect: config.FRONT_DOMAIN + '/login'
       }
     ), generateToken, (req, res) => {
-      res.redirect('http://localhost:5173/login/google')
+      res.redirect(config.FRONT_DOMAIN + '/login/google')
     })
     
   }
