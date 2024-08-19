@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 import { addLogger } from "./utils/logger.js";
 import session from "express-session";
+const MongoStore = require('connect-mongo')(session);
 import compression from "express-compression";
 
 const server = express();
@@ -40,7 +41,10 @@ server.use(session({
   secret: config.SECRET_SESSION,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true }
+  cookie: { secure: true },
+  store: new MongoStore({
+    checkPeriod: 86400000
+  })
 }));
 
 server.use(addLogger)

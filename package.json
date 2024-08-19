@@ -1,7 +1,7 @@
 {
   "name": "proyecto",
   "version": "1.0.0",
-  "description": "Este es un proyecto para mi curso de Back-End en Coderhouse, en este reposiotrio iré creando un back-end para un E-commerce, a lo largo del curso iremos completando varios desafíos para poco a poco ir armando el back-end de la tienda y se irán mostrando desafiío tras desasfío dando una explicación de que se hizo en el.",
+  "description": "",
   "main": "product-class.js",
   "type": "module",
   "scripts": {
