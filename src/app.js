@@ -43,7 +43,7 @@ server.use(
     secret: config.SECRET_SESSION,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, 
+    cookie: { secure: true }, 
     store: new connectMongo({
       mongoUrl: config.MONGO_LINK, 
       collectionName: "sessions",

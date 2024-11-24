@@ -4,7 +4,7 @@ import UserRouter from "./UserRouter.js";
 import ProductsRouter from "./ProductsRouter.js";
 import CartRouter from "./CartRouter.js";
 import MockingRouter from "./MockingRouter.js";
-import docsRouter from "./docsRouter.js";
+import docsRouter from "./DocsRouter.js";
 import ViewsRouter from "./ViewsRouter.js";
 
 const router = Router();
